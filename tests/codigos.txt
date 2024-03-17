@@ -1,0 +1,9 @@
+	// Main
+        // Arquivo arquivo = new Arquivo();
+        // arquivo.obterCaminho();
+        // ValidarAutomato validarAutomato = new ValidarAutomato();
+        // if (validarAutomato.isAfd(arquivo)) {
+        // System.out.println("é um AFD");
+        // } else {
+        // System.out.println("Não é um AFD");
+        // }
