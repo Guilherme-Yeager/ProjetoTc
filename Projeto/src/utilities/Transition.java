@@ -1,4 +1,4 @@
-package file;
+package utilities;
 
 public class Transition {
     private int id;

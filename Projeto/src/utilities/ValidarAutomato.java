@@ -1,4 +1,4 @@
-package file;
+package utilities;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +11,6 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class ValidarAutomato {
-
 
     public boolean isAfd(Arquivo arq){
         try{
@@ -39,26 +38,21 @@ public class ValidarAutomato {
                 Transition transition = new Transition(i, from, to, read);
                 transicoesInfo.add(transition);
             }
-            boolean ehAfd = true;
             for (int i = 0; i < transicoesInfo.size(); i++) {
                 Transition noTransition = transicoesInfo.get(i);
                 for (int j = i + 1; j < transicoesInfo.size(); j++) {
                     if(noTransition.getRead().isEmpty()){
-                        ehAfd = false;
-                        break;
+                        return false;
                     }
                     if(noTransition.getFrom().equals(transicoesInfo.get(j).getFrom())){
                         if(noTransition.getRead().equals(transicoesInfo.get(j).getRead())){
-                            ehAfd = false;
-                            break;
+                            return false;
+                            
                         }
                     }
                 }
-                if(!ehAfd){
-                    break;
-                }
             }
-            return ehAfd;
+            return true;
         } catch (Exception e) {
             e.printStackTrace();
             System.out.println("fdesçafpolçkdsa");
