@@ -11,6 +11,9 @@ public class Main {
                 System.out.println("É um afd");
                 if (validarAutomato.isComplete(arquivo.lerArquivo())) {
                     System.out.println("É completo");
+                    if (validarAutomato.accessibleStates(arquivo.lerArquivo())) {
+                        // TODO (Implementar chamada para minimização)
+                    }
                 } else {
                     System.out.println("Não É completo");
                 }
