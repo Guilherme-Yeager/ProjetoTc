@@ -64,9 +64,10 @@ public class Arquivo {
         return null;
     }
 
-    public static List<Transition> listaTransicoes(Document doc){
+    public static List<Transition> listaTransicoes(Document doc) {
         NodeList listaTransicoes = doc.getElementsByTagName("transition");
-        String from = "", to = "", read = "";
+        int from = 0, to = 0;
+        String read = "";
         List<Transition> transicoesInfo = new ArrayList<>();
         for (int i = 0; i < listaTransicoes.getLength(); i++) {
             Node noTrans = listaTransicoes.item(i);
@@ -75,21 +76,21 @@ public class Arquivo {
                 Node noFilho = filhosNoTrans.item(j);
                 if (noFilho.getNodeType() == Node.ELEMENT_NODE) {
                     if (noFilho.getNodeName() == "from") {
-                        from = noFilho.getTextContent();
+                        from = Integer.parseInt(noFilho.getTextContent());
                     } else if (noFilho.getNodeName() == "to") {
-                        to = noFilho.getTextContent();
+                        to = Integer.parseInt(noFilho.getTextContent());
                     } else {
                         read = noFilho.getTextContent();
                     }
                 }
             }
-            Transition transition = new Transition(i, from, to, read);
+            Transition transition = new Transition(from, to, read);
             transicoesInfo.add(transition);
         }
         return transicoesInfo;
     }
 
-    public static List<State> listaEstados(Document doc){
+    public static List<State> listaEstados(Document doc) {
         NodeList listaEstados = doc.getElementsByTagName("state");
         String name = "", label = "";
         int id = 0;
@@ -101,9 +102,9 @@ public class Arquivo {
             NamedNodeMap atributosEstado = noTrans.getAttributes();
             for (int k = 0; k < atributosEstado.getLength(); k++) {
                 Node atributo = atributosEstado.item(k);
-                if(atributo.getNodeName().equals((String) "id")){
+                if (atributo.getNodeName().equals((String) "id")) {
                     id = Integer.parseInt(atributo.getNodeValue());
-                }else{
+                } else {
                     name = atributo.getNodeValue();
                 }
             }
@@ -115,18 +116,15 @@ public class Arquivo {
                         x = Float.parseFloat(noFilho.getTextContent());
                     } else if (noFilho.getNodeName() == "y") {
                         y = Float.parseFloat(noFilho.getTextContent());
-                    } else if (noFilho.getNodeName() == "initial"){
+                    } else if (noFilho.getNodeName() == "initial") {
                         isInitial = true;
-                    } else if (noFilho.getNodeName() == "final"){
+                    } else if (noFilho.getNodeName() == "final") {
                         isFinal = true;
-                    }else if (noFilho.getNodeName() == "label"){
+                    } else if (noFilho.getNodeName() == "label") {
                         label = noFilho.getTextContent();
                     }
                 }
             }
-            System.out.println(i +"-----------------------------");
-            System.out.println(id + " " + name + " " + isInitial + " " + isFinal + " "+ x + " " + y + "" + label);
-            System.out.println("-----------------------------");
             State state = new State(id, name, isInitial, isFinal, x, y, label);
             listaEstadosInfo.add(state);
             isInitial = false;
@@ -134,6 +132,5 @@ public class Arquivo {
         }
         return listaEstadosInfo;
     }
-
 
 }

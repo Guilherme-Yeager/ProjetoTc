@@ -7,7 +7,7 @@ public class State {
     private Boolean isInitial;
     private Boolean isFinal;
     private String label;
-    
+
     public String getLabel() {
         return label;
     }

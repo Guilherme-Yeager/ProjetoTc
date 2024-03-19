@@ -1,26 +1,22 @@
 package utilities;
 
 public class Transition {
-    private int id;
-    private String from;
-    private String to;
+    private int from, to;
     private String read;
 
-    public int getId() {
-        return id;
-    }
-    public String getFrom() {
+    public int getFrom() {
         return from;
     }
-    public String getTo() {
+
+    public int getTo() {
         return to;
     }
+
     public String getRead() {
         return read;
     }
 
-    public Transition(int id, String from, String to, String read) {
-        this.id = id;
+    public Transition(int from, int to, String read) {
         this.from = from;
         this.to = to;
         this.read = read;

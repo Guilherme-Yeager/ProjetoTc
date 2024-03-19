@@ -1,5 +1,6 @@
 package utilities;
 
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -19,7 +20,8 @@ public class ValidarAutomato {
                     return false;
                 }
                 for (int j = i + 1; j < transicoesInfo.size(); j++) {
-                    if (noTransition.getFrom().equals(transicoesInfo.get(j).getFrom())) {
+                    if (Integer.toString(noTransition.getFrom())
+                            .equals(Integer.toString(transicoesInfo.get(j).getFrom()))) {
                         if (noTransition.getRead().equals(transicoesInfo.get(j).getRead())) {
                             return false;
 
@@ -42,10 +44,12 @@ public class ValidarAutomato {
         do {
             simbolo = JOptionPane.showInputDialog(null, "Informe um símbolo do alfabeto:", "Informe o Sigma:",
                     JOptionPane.PLAIN_MESSAGE);
-            if (simbolo != null) {
+            if (simbolo != null && !simbolo.isEmpty()) {
                 sigma.add(simbolo);
             } else {
-                break;
+                if (simbolo == null) {
+                    break;
+                }
             }
         } while (true);
         try {
@@ -54,13 +58,14 @@ public class ValidarAutomato {
             Set<String> sigmaDoAutomato = new HashSet<>();
             for (int i = 0; i < transicoesInfo.size(); i++) {
                 Transition noTransition = transicoesInfo.get(i);
-                if (fromAnalisados.contains(noTransition.getFrom())) {
+                if (fromAnalisados.contains(Integer.toString(noTransition.getFrom()))) {
                     continue;
                 }
                 fromAnalisados += noTransition.getFrom();
                 sigmaDoAutomato.add(noTransition.getRead());
                 for (int j = i + 1; j < transicoesInfo.size(); j++) {
-                    if (noTransition.getFrom().equals(transicoesInfo.get(j).getFrom())) {
+                    if (Integer.toString(noTransition.getFrom())
+                            .equals(Integer.toString(transicoesInfo.get(j).getFrom()))) {
                         sigmaDoAutomato.add(transicoesInfo.get(j).getRead());
                     }
                 }
@@ -77,8 +82,35 @@ public class ValidarAutomato {
     }
 
     public boolean accessibleStates(Document doc) {
-        // TODO
-        return true;
+        List<State> estados = utilities.Arquivo.listaEstados(doc);
+        List<Transition> transicoes = utilities.Arquivo.listaTransicoes(doc);
+        State estadoInicial = null;
+        for (State estado : estados) {
+            if (estado.getIsInitial()) {
+                estadoInicial = estado;
+            }
+        }
+        if (estadoInicial == null) {
+            return false;
+        }
+        List<State> estadosAlcancados = new ArrayList<>();
+        verificarEstadosAlcancados(estados, estadosAlcancados, estadoInicial, transicoes);
+        Set<State> conjEstadosAlcancados = new HashSet<>(estadosAlcancados);
+        Set<State> conjEstados = new HashSet<>(estados);
+        return conjEstadosAlcancados.equals(conjEstados);
+    }
+
+    public static void verificarEstadosAlcancados(List<State> estados, List<State> estadosAlcancados, State estadoAtual,
+            List<Transition> transicoes) {
+        estadosAlcancados.add(estadoAtual);
+        for (Transition transicao : transicoes) {
+            if (transicao.getFrom() == estadoAtual.getId()) {
+                State proximoEstado = estados.get(transicao.getTo());
+                if (!estadosAlcancados.contains(proximoEstado)) {
+                    verificarEstadosAlcancados(estados, estadosAlcancados, proximoEstado, transicoes);
+                }
+            }
+        }
     }
 
 }

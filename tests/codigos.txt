@@ -7,3 +7,27 @@
         // } else {
         // System.out.println("Não é um AFD");
         // }
+
+        // Debug no accessibleStates
+        System.out.println("\n\nListas: ");
+        for(State estado: estados){
+            System.out.println(estado.getId());
+
+        }
+        System.out.println("-------------------");
+        for(State estado: estadosAlcancados){
+            System.out.println(estado.getId());
+
+        }
+        System.out.println("\n\nConjuntos: ");
+        Set<State> conjuntoEstados = new HashSet<>(estados);
+        Set<State> conjuntoEstadosAlcancados = new HashSet<>(estadosAlcancados);
+        for(State estado: conjuntoEstados){
+            System.out.println(estado.getId());
+
+        }
+        System.out.println("-------------------");
+        for(State estado: conjuntoEstadosAlcancados){
+            System.out.println(estado.getId());
+
+        }
