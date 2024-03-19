@@ -15,19 +15,18 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Arquivo {
-    private String caminho;
+    Document doc;
 
-    public String getCaminho() {
-        return caminho;
+    public Document getDoc() {
+        return doc;
     }
 
-    public void setCaminho(String caminho) {
-        this.caminho = caminho;
+    public void setDoc(Document doc) {
+        this.doc = doc;
     }
 
     /**
-     * Método utilizado para definir o atributo caminho de acordo com arquivo
-     * selecionado pelo usuário
+     * Método para o usuário selecionar um arquivo .jff
      * 
      * @return Caminho do arquivo
      */
@@ -40,7 +39,9 @@ public class Arquivo {
             jFileChooser.setDialogTitle("Selecione um arquivo .jff");
             if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File arquivo = jFileChooser.getSelectedFile();
-                return "file:///" + arquivo.getAbsolutePath();
+                String caminho = "file:///" + arquivo.getAbsolutePath();
+                this.setDoc(this.lerArquivo(caminho));
+                return caminho;
             } else {
                 return null;
             }
@@ -50,12 +51,19 @@ public class Arquivo {
         }
     }
 
-    public Document lerArquivo() {
+    /**
+     * Método para o processar um objeto Document que serve
+     * para acessar e manipular um documento XML
+     * 
+     * @param caminho do arquivo
+     * @return Um objeto Document que representa o conteúdo do arquivo
+     */
+    public Document lerArquivo(String caminho) {
         try {
-            if (this.caminho != null) {
+            if (caminho != null) {
                 DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
                 DocumentBuilder builder = factory.newDocumentBuilder();
-                Document doc = builder.parse(this.getCaminho());
+                Document doc = builder.parse(caminho);
                 return doc;
             }
         } catch (Exception e) {
@@ -64,6 +72,13 @@ public class Arquivo {
         return null;
     }
 
+    /**
+     * Método para o processar o documento para obter
+     * a lista de transições do autômato
+     * 
+     * @param doc é um objeto Document que representa o conteúdo do arquivo
+     * @return Uma lista de transições do autômato lido do documento
+     */
     public static List<Transition> listaTransicoes(Document doc) {
         NodeList listaTransicoes = doc.getElementsByTagName("transition");
         int from = 0, to = 0;
@@ -90,6 +105,13 @@ public class Arquivo {
         return transicoesInfo;
     }
 
+    /**
+     * Método para o processar o documento para obter
+     * a lista de estados do autômato
+     * 
+     * @param doc é um objeto Document que representa o conteúdo do arquivo
+     * @return Uma lista de estados do autômato lido do documento
+     */
     public static List<State> listaEstados(Document doc) {
         NodeList listaEstados = doc.getElementsByTagName("state");
         String name = "", label = "";

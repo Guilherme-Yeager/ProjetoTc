@@ -5,13 +5,12 @@ public class Main {
         Arquivo arquivo = new Arquivo();
         String caminho = arquivo.obterCaminho();
         if (caminho != null) {
-            arquivo.setCaminho(caminho);
             ValidarAutomato validarAutomato = new ValidarAutomato();
-            if (validarAutomato.isAfd(arquivo.lerArquivo())) {
+            if (validarAutomato.isAfd(arquivo.getDoc())) {
                 System.out.println("É um afd");
-                if (validarAutomato.isComplete(arquivo.lerArquivo())) {
+                if (validarAutomato.isComplete(arquivo.getDoc())) {
                     System.out.println("É completo");
-                    if (validarAutomato.accessibleStates(arquivo.lerArquivo())) {
+                    if (validarAutomato.accessibleStates(arquivo.getDoc())) {
                         System.out.println("Todos Estados São Acessíveis");
                     } else {
                         System.out.println("Nem Todos Estados Não são Acessíveis");
