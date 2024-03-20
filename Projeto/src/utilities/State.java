@@ -8,14 +8,6 @@ public class State {
     private Boolean isFinal;
     private String label;
 
-    public String getLabel() {
-        return label;
-    }
-
-    public void setLabel(String label) {
-        this.label = label;
-    }
-
     public State(int id, String name, Boolean isInitial, Boolean isFinal, float x, float y, String label) {
         this.id = id;
         this.name = name;
@@ -23,6 +15,14 @@ public class State {
         this.isFinal = isFinal;
         this.x = x;
         this.y = y;
+        this.label = label;
+    }
+    
+    public String getLabel() {
+        return label;
+    }
+
+    public void setLabel(String label) {
         this.label = label;
     }
 

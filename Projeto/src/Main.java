@@ -11,13 +11,16 @@ public class Main {
                 if (validarAutomato.isComplete(arquivo.getDoc())) {
                     System.out.println("É completo");
                     if (validarAutomato.accessibleStates(arquivo.getDoc())) {
-                        System.out.println("Todos Estados São Acessíveis");
+                        System.out.println("Todos estados são acessíveis");
+                        // TODO Minimização
                     } else {
-                        System.out.println("Nem Todos Estados Não são Acessíveis");
+                        System.out.println("Nem todos Estados são acessíveis");
                     }
                 } else {
                     System.out.println("Não É completo");
                 }
+            }else{
+                System.out.println("é um Afn ou nem estado tem");
             }
         }
         // Finalizar funcionalidade

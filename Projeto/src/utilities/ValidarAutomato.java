@@ -14,6 +14,10 @@ public class ValidarAutomato {
     public boolean isAfd(Document doc) {
         try {
             List<Transition> transicoesInfo = utilities.Arquivo.listaTransicoes(doc);
+            List<State> estados = utilities.Arquivo.listaEstados(doc);
+            if(estados.isEmpty()){
+                return false;
+            }
             for (int i = 0; i < transicoesInfo.size(); i++) {
                 Transition noTransition = transicoesInfo.get(i);
                 if (noTransition.getRead().isEmpty()) {

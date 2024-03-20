@@ -52,7 +52,7 @@ public class Arquivo {
     }
 
     /**
-     * Método para o processar um objeto Document que serve
+     * Método para processar um objeto Document que serve
      * para acessar e manipular um documento XML
      * 
      * @param caminho do arquivo
@@ -73,7 +73,7 @@ public class Arquivo {
     }
 
     /**
-     * Método para o processar o documento para obter
+     * Método para processar o documento para obter
      * a lista de transições do autômato
      * 
      * @param doc é um objeto Document que representa o conteúdo do arquivo
@@ -104,7 +104,7 @@ public class Arquivo {
         }
         return transicoesInfo;
     }
-
+    
     /**
      * Método para o processar o documento para obter
      * a lista de estados do autômato
