@@ -31,3 +31,12 @@
             System.out.println(estado.getId());
 
         }
+
+        // Teste imprimindo a tabela
+        for(int i = estados.size() - 1; i >= 0; i--){
+            for (int j = estados.size() - 1; j >= i + 1; j--) {
+                String chave = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
+                System.out.print(" [ " + paresEstados.get(chave).getQu().getName() + paresEstados.get(chave).getQv().getName() +  " " + paresEstados.get(chave).isEquivalent() + " ]  ");
+            }
+            System.out.println();
+        }

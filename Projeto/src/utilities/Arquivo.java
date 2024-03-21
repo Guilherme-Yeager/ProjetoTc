@@ -104,7 +104,7 @@ public class Arquivo {
         }
         return transicoesInfo;
     }
-    
+
     /**
      * Método para o processar o documento para obter
      * a lista de estados do autômato
