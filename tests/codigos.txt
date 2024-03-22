@@ -40,3 +40,10 @@
             }
             System.out.println();
         }
+
+        System.out.println("QU, QV");
+        System.out.println(paresEstados.get(chave).getQu().getName());
+        System.out.println(paresEstados.get(chave).getQv().getName());
+        System.out.println("PU, PV");
+        System.out.println(listaPuPv.get(0).getName());
+        System.out.println(listaPuPv.get(1).getName());

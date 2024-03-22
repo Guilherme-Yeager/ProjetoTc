@@ -10,11 +10,34 @@ import javax.swing.JOptionPane;
 import org.w3c.dom.Document;
 
 public class ValidarAutomato {
+    private Set<String> sigma;
+    private Arquivo arquivo;
+
+    
+    public ValidarAutomato(Arquivo arquivo) {
+        this.arquivo = arquivo;
+    }
+
+    public Arquivo getArquivo() {
+        return arquivo;
+    }
+
+    public void setArquivo(Arquivo arquivo) {
+        this.arquivo = arquivo;
+    }
+
+    public Set<String> getSigma() {
+        return sigma;
+    }
+
+    public void setSigma(Set<String> sigma) {
+        this.sigma = sigma;
+    }
 
     public boolean isAfd(Document doc) {
         try {
-            List<Transition> transicoesInfo = utilities.Arquivo.listaTransicoes(doc);
-            List<State> estados = utilities.Arquivo.listaEstados(doc);
+            List<Transition> transicoesInfo = this.getArquivo().listaTransicoes(doc);
+            List<State> estados = this.getArquivo().listaEstados(doc);
             if(estados.isEmpty()){
                 return false;
             }
@@ -57,27 +80,12 @@ public class ValidarAutomato {
             }
         } while (true);
         try {
-            List<Transition> transicoesInfo = utilities.Arquivo.listaTransicoes(doc);
-            String fromAnalisados = "";
+            List<Transition> transicoesInfo = this.getArquivo().listaTransicoes(doc);
             Set<String> sigmaDoAutomato = new HashSet<>();
             for (int i = 0; i < transicoesInfo.size(); i++) {
-                Transition noTransition = transicoesInfo.get(i);
-                if (fromAnalisados.contains(Integer.toString(noTransition.getFrom()))) {
-                    continue;
-                }
-                fromAnalisados += noTransition.getFrom();
-                sigmaDoAutomato.add(noTransition.getRead());
-                for (int j = i + 1; j < transicoesInfo.size(); j++) {
-                    if (Integer.toString(noTransition.getFrom())
-                            .equals(Integer.toString(transicoesInfo.get(j).getFrom()))) {
-                        sigmaDoAutomato.add(transicoesInfo.get(j).getRead());
-                    }
-                }
-                if (!sigma.equals(sigmaDoAutomato)) {
-                    return false;
-                }
-                sigmaDoAutomato.clear();
+                sigmaDoAutomato.add(transicoesInfo.get(i).getRead());
             }
+            this.setSigma(sigmaDoAutomato);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -86,8 +94,8 @@ public class ValidarAutomato {
     }
 
     public boolean accessibleStates(Document doc) {
-        List<State> estados = utilities.Arquivo.listaEstados(doc);
-        List<Transition> transicoes = utilities.Arquivo.listaTransicoes(doc);
+        List<State> estados = this.getArquivo().listaEstados(doc);
+        List<Transition> transicoes = this.getArquivo().listaTransicoes(doc);
         State estadoInicial = null;
         for (State estado : estados) {
             if (estado.getIsInitial()) {

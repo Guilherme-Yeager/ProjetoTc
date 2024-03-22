@@ -15,9 +15,9 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Arquivo {
-    Document doc;
+    private  Document doc;
 
-    public Document getDoc() {
+    public  Document getDoc() {
         return doc;
     }
 
@@ -40,7 +40,7 @@ public class Arquivo {
             if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File arquivo = jFileChooser.getSelectedFile();
                 String caminho = "file:///" + arquivo.getAbsolutePath();
-                this.setDoc(this.lerArquivo(caminho));
+                setDoc(this.lerArquivo(caminho));
                 return caminho;
             } else {
                 return null;
@@ -79,7 +79,7 @@ public class Arquivo {
      * @param doc é um objeto Document que representa o conteúdo do arquivo
      * @return Uma lista de transições do autômato lido do documento
      */
-    public static List<Transition> listaTransicoes(Document doc) {
+    public List<Transition> listaTransicoes(Document doc) {
         NodeList listaTransicoes = doc.getElementsByTagName("transition");
         int from = 0, to = 0;
         String read = "";
@@ -112,7 +112,7 @@ public class Arquivo {
      * @param doc é um objeto Document que representa o conteúdo do arquivo
      * @return Uma lista de estados do autômato lido do documento
      */
-    public static List<State> listaEstados(Document doc) {
+    public List<State> listaEstados(Document doc) {
         NodeList listaEstados = doc.getElementsByTagName("state");
         String name = "", label = "";
         int id = 0;

@@ -1,20 +1,18 @@
 package utilities;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.swing.text.StyledEditorKit.BoldAction;
-
-import org.w3c.dom.Document;
 
 public class Minimization {
 
-    public void minimizarAutomato(Document doc) {
-        List<State> estados = utilities.Arquivo.listaEstados(doc);
+    public void minimizarAutomato(Arquivo arquivo, ValidarAutomato validarAutomato) {
+        List<State> estados = arquivo.listaEstados(arquivo.getDoc());
         HashMap<String, CombinedState> paresEstados = this.geraTabela(estados);
         // List<Transition> transicoes = utilities.Arquivo.listaTransicoes(doc);
         this.marcarTrivialmenteNaoEquivalente(paresEstados, estados);
-
+        this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);
     }
 
     // Passo 1
@@ -46,4 +44,57 @@ public class Minimization {
             }
         }
     }
+
+    // Passo 3
+    public void marcarNaoEquivalente(HashMap<String, CombinedState> paresEstados, List<State> estados, Arquivo arquivo, ValidarAutomato validarAutomato) {
+        List<String> sigma = new ArrayList<>(validarAutomato.getSigma());
+        for (int i = estados.size() - 1; i >= 0; i--) {
+            for (int j = estados.size() - 1; j >= i + 1; j--) {
+                String chave = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
+                for(int k = 0; k < sigma.size(); k++){
+                    if (paresEstados.get(chave).isEquivalent()) {
+                        List<State> listaPuPv = new ArrayList<>();
+                        this.acharPuPv(listaPuPv, paresEstados.get(chave).getQu(), paresEstados.get(chave).getQv(),
+                                sigma.get(k), arquivo);
+                        // listaPuPv = tem o PuPv; sigma.get(k) = simbolo; paresEstados.get(chave).getQu() = qu paresEstados.get(chave).getQv() = qv;
+                    }
+                }
+            
+ 
+            }
+            
+            System.out.println();
+        }
+    }
+
+    public void acharPuPv(List<State> listaPuPv, State qu, State qv, String simbolo, Arquivo arquivo) {
+        System.out.println("Simbolo: " + simbolo);
+        List<Transition> listaTransitions = arquivo.listaTransicoes(arquivo.getDoc());
+        List<State> listaEstStates = arquivo.listaEstados(arquivo.getDoc());
+        boolean quQvVisitados = false;
+        for (Transition transition : listaTransitions) {
+            if (transition.getFrom() == qu.getId()) {
+                if (transition.getRead().equals(simbolo)) {
+                    listaPuPv.add(listaEstStates.get(transition.getTo()));
+                    if(quQvVisitados){
+                        return;
+                    }else{
+                        quQvVisitados = true;
+                    }
+                }
+            }
+            if (transition.getFrom() == qv.getId()) {
+                if (transition.getRead().equals(simbolo)) {
+                    listaPuPv.add(listaEstStates.get(transition.getTo()));
+                }
+                if(quQvVisitados){
+                    return;
+                }else{
+                    quQvVisitados = true;
+                }
+            }
+        }
+
+    }
+
 }
