@@ -1,49 +1,51 @@
-	// Main
-        // Arquivo arquivo = new Arquivo();
-        // arquivo.obterCaminho();
-        // ValidarAutomato validarAutomato = new ValidarAutomato();
-        // if (validarAutomato.isAfd(arquivo)) {
-        // System.out.println("é um AFD");
-        // } else {
-        // System.out.println("Não é um AFD");
-        // }
+// Main
+ // Arquivo arquivo = new Arquivo();
+ // arquivo.obterCaminho();
+ // ValidarAutomato validarAutomato = new ValidarAutomato();
+ // if (validarAutomato.isAfd(arquivo)) {
+ // System.out.println("é um AFD");
+ // } else {
+ // System.out.println("Não é um AFD");
+ // }
 
-        // Debug no accessibleStates
-        System.out.println("\n\nListas: ");
-        for(State estado: estados){
-            System.out.println(estado.getId());
+ // Debug no accessibleStates
+ System.out.println("\n\nListas: ");
+ for(State estado: estados){
+ System.out.println(estado.getId());
 
-        }
-        System.out.println("-------------------");
-        for(State estado: estadosAlcancados){
-            System.out.println(estado.getId());
+ }
+ System.out.println("-------------------");
+ for(State estado: estadosAlcancados){
+ System.out.println(estado.getId());
 
-        }
-        System.out.println("\n\nConjuntos: ");
-        Set<State> conjuntoEstados = new HashSet<>(estados);
-        Set<State> conjuntoEstadosAlcancados = new HashSet<>(estadosAlcancados);
-        for(State estado: conjuntoEstados){
-            System.out.println(estado.getId());
+ }
+ System.out.println("\n\nConjuntos: ");
+ Set<State> conjuntoEstados = new HashSet<>(estados);
+ Set<State> conjuntoEstadosAlcancados = new HashSet<>(estadosAlcancados);
+ for(State estado: conjuntoEstados){
+ System.out.println(estado.getId());
 
-        }
-        System.out.println("-------------------");
-        for(State estado: conjuntoEstadosAlcancados){
-            System.out.println(estado.getId());
+ }
+ System.out.println("-------------------");
+ for(State estado: conjuntoEstadosAlcancados){
+ System.out.println(estado.getId());
 
-        }
+ }
 
-        // Teste imprimindo a tabela
-        for(int i = estados.size() - 1; i >= 0; i--){
-            for (int j = estados.size() - 1; j >= i + 1; j--) {
-                String chave = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
-                System.out.print(" [ " + paresEstados.get(chave).getQu().getName() + paresEstados.get(chave).getQv().getName() +  " " + paresEstados.get(chave).isEquivalent() + " ]  ");
-            }
-            System.out.println();
-        }
+ // Teste imprimindo a tabela
+ for(int i = estados.size() - 1; i >= 0; i--){
+ for (int j = estados.size() - 1; j >= i + 1; j--) {
+ String chave = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
+ System.out.print(" [ " + paresEstados.get(chave).getQu().getName() + paresEstados.get(chave).getQv().getName() + " " + paresEstados.get(chave).isEquivalent() + " ] ");
+ }
+ System.out.println();
+ }
 
-        System.out.println("QU, QV");
-        System.out.println(paresEstados.get(chave).getQu().getName());
-        System.out.println(paresEstados.get(chave).getQv().getName());
-        System.out.println("PU, PV");
-        System.out.println(listaPuPv.get(0).getName());
-        System.out.println(listaPuPv.get(1).getName());
+ System.out.println("QU, QV");
+ System.out.println(paresEstados.get(chave).getQu().getName());
+ System.out.println(paresEstados.get(chave).getQv().getName());
+ System.out.println("PU, PV");
+ System.out.println(listaPuPv.get(0).getName());
+ System.out.println(listaPuPv.get(1).getName());
+
+ // Se já analisou com aquele par, vai pro prox de pu e pv

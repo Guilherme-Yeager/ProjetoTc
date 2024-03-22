@@ -1,17 +1,30 @@
 package utilities;
 
+import java.util.HashSet;
+import java.util.Set;
+
 public class CombinedState {
     private State qu;
     private State qv;
     private boolean isEquivalent;
-
+    private Set<CombinedState> listaEstados;
+    
     
     public CombinedState(State qu, State qv){
         this.qu = qu;
         this.qv = qv;
         this.isEquivalent = true;
+        this.listaEstados = new HashSet<>();
     }
     
+    public Set<CombinedState> getListaEstados() {
+        return listaEstados;
+    }
+
+    public void setListaEstados(CombinedState estado) {
+        this.listaEstados.add(estado);
+    }
+
     public State getQu() {
         return qu;
     }

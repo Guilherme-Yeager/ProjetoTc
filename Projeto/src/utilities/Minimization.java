@@ -1,6 +1,8 @@
 package utilities;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
@@ -48,50 +50,63 @@ public class Minimization {
     // Passo 3
     public void marcarNaoEquivalente(HashMap<String, CombinedState> paresEstados, List<State> estados, Arquivo arquivo, ValidarAutomato validarAutomato) {
         List<String> sigma = new ArrayList<>(validarAutomato.getSigma());
-        for (int i = estados.size() - 1; i >= 0; i--) {
-            for (int j = estados.size() - 1; j >= i + 1; j--) {
-                String chave = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
+        List<State> listaPuPv = new ArrayList<>();
+        String chaveEstado, chavePuPv;
+        Comparator<State> comparador = Comparator.comparing(State::getId);
+        int x = 0;
+        for (int i = 0; i < estados.size(); i++) {
+            for (int j = i + 1; j < estados.size(); j++) {
+                chaveEstado = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
+                if (!paresEstados.get(chaveEstado).isEquivalent()) {
+                    continue;
+                }
                 for(int k = 0; k < sigma.size(); k++){
-                    if (paresEstados.get(chave).isEquivalent()) {
-                        List<State> listaPuPv = new ArrayList<>();
-                        this.acharPuPv(listaPuPv, paresEstados.get(chave).getQu(), paresEstados.get(chave).getQv(),
+                        this.acharPuPv(listaPuPv, paresEstados.get(chaveEstado).getQu(), paresEstados.get(chaveEstado).getQv(),
                                 sigma.get(k), arquivo);
-                        // listaPuPv = tem o PuPv; sigma.get(k) = simbolo; paresEstados.get(chave).getQu() = qu paresEstados.get(chave).getQv() = qv;
-                    }
+                        Collections.sort(listaPuPv, comparador);
+                        if(listaPuPv.get(0).getId() != listaPuPv.get(1).getId()){
+                            chavePuPv = Integer.toString(listaPuPv.get(0).getId()) + Integer.toString(listaPuPv.get(1).getId());
+                            if(paresEstados.get(chavePuPv).isEquivalent()){   // 3.2
+                                paresEstados.get(chavePuPv).setListaEstados(paresEstados.get(chaveEstado));
+                                
+                            }else{      // 3.3
+                                
+                            }
+                        }
+                        listaPuPv.clear();
                 }
             
  
             }
             
-            System.out.println();
         }
+
     }
 
     public void acharPuPv(List<State> listaPuPv, State qu, State qv, String simbolo, Arquivo arquivo) {
-        System.out.println("Simbolo: " + simbolo);
         List<Transition> listaTransitions = arquivo.listaTransicoes(arquivo.getDoc());
         List<State> listaEstStates = arquivo.listaEstados(arquivo.getDoc());
-        boolean quQvVisitados = false;
+        boolean achouPuPv = false;
         for (Transition transition : listaTransitions) {
             if (transition.getFrom() == qu.getId()) {
                 if (transition.getRead().equals(simbolo)) {
                     listaPuPv.add(listaEstStates.get(transition.getTo()));
-                    if(quQvVisitados){
-                        return;
+                    if(achouPuPv){
+                        break;
                     }else{
-                        quQvVisitados = true;
+                        achouPuPv = true;
                     }
                 }
             }
             if (transition.getFrom() == qv.getId()) {
                 if (transition.getRead().equals(simbolo)) {
                     listaPuPv.add(listaEstStates.get(transition.getTo()));
-                }
-                if(quQvVisitados){
-                    return;
-                }else{
-                    quQvVisitados = true;
-                }
+                    if(achouPuPv){
+                        break;
+                    }else{
+                        achouPuPv = true;
+                    }
+                }             
             }
         }
 
