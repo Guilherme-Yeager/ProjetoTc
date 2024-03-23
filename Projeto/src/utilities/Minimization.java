@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 
-
 public class Minimization {
 
     public void minimizarAutomato(Arquivo arquivo, ValidarAutomato validarAutomato) {
@@ -15,6 +14,7 @@ public class Minimization {
         // List<Transition> transicoes = utilities.Arquivo.listaTransicoes(doc);
         this.marcarTrivialmenteNaoEquivalente(paresEstados, estados);
         this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);
+        List<State> novosEstados = this.unificarEstados(paresEstados, estados);
     }
 
     // Passo 1
@@ -48,37 +48,38 @@ public class Minimization {
     }
 
     // Passo 3
-    public void marcarNaoEquivalente(HashMap<String, CombinedState> paresEstados, List<State> estados, Arquivo arquivo, ValidarAutomato validarAutomato) {
+    public void marcarNaoEquivalente(HashMap<String, CombinedState> paresEstados, List<State> estados, Arquivo arquivo,
+            ValidarAutomato validarAutomato) {
         List<String> sigma = new ArrayList<>(validarAutomato.getSigma());
         List<State> listaPuPv = new ArrayList<>();
         String chaveEstado, chavePuPv;
         Comparator<State> comparador = Comparator.comparing(State::getId);
-        int x = 0;
         for (int i = 0; i < estados.size(); i++) {
             for (int j = i + 1; j < estados.size(); j++) {
                 chaveEstado = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
                 if (!paresEstados.get(chaveEstado).isEquivalent()) {
                     continue;
                 }
-                for(int k = 0; k < sigma.size(); k++){
-                        this.acharPuPv(listaPuPv, paresEstados.get(chaveEstado).getQu(), paresEstados.get(chaveEstado).getQv(),
-                                sigma.get(k), arquivo);
-                        Collections.sort(listaPuPv, comparador);
-                        if(listaPuPv.get(0).getId() != listaPuPv.get(1).getId()){
-                            chavePuPv = Integer.toString(listaPuPv.get(0).getId()) + Integer.toString(listaPuPv.get(1).getId());
-                            if(paresEstados.get(chavePuPv).isEquivalent()){   // 3.2
-                                paresEstados.get(chavePuPv).setListaEstados(paresEstados.get(chaveEstado));
-                                
-                            }else{      // 3.3
-                                
-                            }
+                for (int k = 0; k < sigma.size(); k++) {
+                    this.acharPuPv(listaPuPv, paresEstados.get(chaveEstado).getQu(),
+                            paresEstados.get(chaveEstado).getQv(),
+                            sigma.get(k), arquivo);
+                    Collections.sort(listaPuPv, comparador);
+                    if (listaPuPv.get(0).getId() != listaPuPv.get(1).getId()) {
+                        chavePuPv = Integer.toString(listaPuPv.get(0).getId())
+                                + Integer.toString(listaPuPv.get(1).getId());
+                        if (paresEstados.get(chavePuPv).isEquivalent()) { // 3.2
+                            paresEstados.get(chavePuPv).setListaEstados(paresEstados.get(chaveEstado));
+                        } else { // 3.3
+                            paresEstados.get(chaveEstado).setEquivalent(false);
+                            this.limparListas(paresEstados.get(chaveEstado));
                         }
-                        listaPuPv.clear();
+                    }
+                    listaPuPv.clear();
                 }
-            
- 
+
             }
-            
+
         }
 
     }
@@ -91,9 +92,9 @@ public class Minimization {
             if (transition.getFrom() == qu.getId()) {
                 if (transition.getRead().equals(simbolo)) {
                     listaPuPv.add(listaEstStates.get(transition.getTo()));
-                    if(achouPuPv){
+                    if (achouPuPv) {
                         break;
-                    }else{
+                    } else {
                         achouPuPv = true;
                     }
                 }
@@ -101,15 +102,69 @@ public class Minimization {
             if (transition.getFrom() == qv.getId()) {
                 if (transition.getRead().equals(simbolo)) {
                     listaPuPv.add(listaEstStates.get(transition.getTo()));
-                    if(achouPuPv){
+                    if (achouPuPv) {
                         break;
-                    }else{
+                    } else {
                         achouPuPv = true;
                     }
-                }             
+                }
             }
         }
 
+    }
+
+    public void limparListas(CombinedState combinedState) {
+        for (CombinedState state : combinedState.getListaEstados()) {
+            limparListas(state);
+            state.setEquivalent(false);
+            state.getListaEstados().clear();
+        }
+
+    }
+
+    // Passo 4
+    public List<State> unificarEstados(HashMap<String, CombinedState> paresEstados, List<State> estados) {
+        String chaveEstado;
+        List<State> novosEstados = new ArrayList<>();
+        for (int i = 0; i < estados.size(); i++) {
+            for (int j = i + 1; j < estados.size(); j++) {
+                chaveEstado = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
+                if (paresEstados.get(chaveEstado).isEquivalent()) {
+                    novosEstados.add(new State(paresEstados.get(chaveEstado).getQu().getId(),
+                            paresEstados.get(chaveEstado).getQu().getName()
+                                    + paresEstados.get(chaveEstado).getQv().getName(),
+                            paresEstados.get(chaveEstado).getQu().getIsInitial()
+                                    || paresEstados.get(chaveEstado).getQv().getIsInitial() == true ? true : false,
+                            paresEstados.get(chaveEstado).getQu().getIsFinal() ? true : false,
+                            paresEstados.get(chaveEstado).getQu().getX(), paresEstados.get(chaveEstado).getQu().getY(),
+                            Integer.toString(paresEstados.get(chaveEstado).getQu().getId())
+                                    + " " + Integer.toString(paresEstados.get(chaveEstado).getQv().getId())));
+                }
+            }
+        }
+        List<State> estadosRestante = new ArrayList<>();
+        boolean adicionarEstado = true;
+        for (State estado : estados) {
+            for (State novoEstado : novosEstados) {
+                if (estado.getId() == novoEstado.getId() || estado.getId() == novoEstado.getId() + 1) {
+                    adicionarEstado = false;
+                    break;
+                }
+            }
+            if(adicionarEstado){
+                estadosRestante.add(estado);
+            }
+            adicionarEstado = true;
+        }
+        novosEstados.addAll(estadosRestante);
+        Comparator<State> comparador = Comparator.comparing(State::getId);
+        Collections.sort(novosEstados, comparador);
+        int cont = 0;
+        for (State estado : novosEstados) {
+            estado.setId(cont);
+            cont++;
+        }
+        return novosEstados;
     }
 
 }

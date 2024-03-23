@@ -49,3 +49,23 @@
  System.out.println(listaPuPv.get(1).getName());
 
  // Se já analisou com aquele par, vai pro prox de pu e pv
+
+System.out.println("Imprimindo listas criada na condição 3.2");
+ for (int i = 0; i < estados.size(); i++) {
+ for (int j = i + 1; j < estados.size(); j++) {
+ chaveEstado = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
+ if(paresEstados.get(chaveEstado).isEquivalent()){
+
+ System.out.println("-------------------------");
+ System.out.println("QU, QV");
+ System.out.println(paresEstados.get(chaveEstado).getQu().getName());
+ System.out.println(paresEstados.get(chaveEstado).getQv().getName());
+ System.out.println("Lista: ");
+ for (CombinedState combinedState : paresEstados.get(chaveEstado).getListaEstados()) {
+ System.out.println(combinedState.getQu().getName() + combinedState.getQv().getName());
+ }
+ System.out.println("-------------------------");
+ }
+
+ }
+ }
