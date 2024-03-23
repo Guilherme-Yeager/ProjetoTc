@@ -1,23 +1,32 @@
 package utilities;
 
 import java.io.File;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.swing.JFileChooser;
+
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.w3c.dom.Element;
 
 public class Arquivo {
-    private  Document doc;
+    private Document doc;
 
-    public  Document getDoc() {
+    public Document getDoc() {
         return doc;
     }
 
@@ -153,6 +162,106 @@ public class Arquivo {
             isFinal = false;
         }
         return listaEstadosInfo;
+    }
+
+    public void gravarAutomato(List<State> novosEstados, List<Transition> novasTransicoes) {
+        JFileChooser jFileChooser = new JFileChooser();
+        if (jFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
+            File automatoMinimizado = jFileChooser.getSelectedFile();
+            automatoMinimizado = new File(automatoMinimizado.getAbsoluteFile() + ".jff"); // Sobrescrevendo
+
+            try {
+                String arquivo = automatoMinimizado.getAbsolutePath();
+
+                DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
+                DocumentBuilder dc = dbf.newDocumentBuilder();
+                Document d = dc.newDocument();
+
+                Element raiz = d.createElement("structure");
+                d.appendChild(raiz);
+
+                Element type = d.createElement("type");
+                type.appendChild(d.createTextNode("fa"));
+                raiz.appendChild(type);
+
+                Element automato = d.createElement("automaton");
+                raiz.appendChild(automato); 
+                for(State estado : novosEstados){
+                    Element state = d.createElement("state");
+                    Attr attrId = d.createAttribute("id");
+                    Attr attrName = d.createAttribute("name");
+                    attrId.setValue(Integer.toString(estado.getId()));
+                    attrName.setValue("q" + Integer.toString(estado.getId()));
+                    state.setAttributeNode(attrId);
+                    state.setAttributeNode(attrName);
+                    Element x = d.createElement("x");
+                    Element y = d.createElement("y");
+                    x.appendChild(d.createTextNode(Float.toString(estado.getX())));
+                    y.appendChild(d.createTextNode(Float.toString(estado.getY())));
+                    state.appendChild(x);
+                    state.appendChild(y);
+                    if(estado.getIsInitial()){
+                        Element inicial = d.createElement("initial");
+                        state.appendChild(inicial);
+                    }
+                    if(estado.getIsFinal()){
+                        Element isFinal = d.createElement("final");
+                        state.appendChild(isFinal);
+                    }
+                    if(!estado.getLabel().isEmpty()){
+                        Element label = d.createElement("final");
+                        label.appendChild(d.createTextNode(estado.getLabel()));
+                        state.appendChild(label);
+                    }
+                    automato.appendChild(state);
+                }
+                for(Transition transicao : novasTransicoes){
+                    Element transition = d.createElement("transition");
+                    Element from = d.createElement("from");
+                    Element to = d.createElement("to");
+                    Element read = d.createElement("read");
+                    from.appendChild(d.createTextNode(Integer.toString(transicao.getFrom())));
+                    to.appendChild(d.createTextNode(Integer.toString(transicao.getTo())));
+                    read.appendChild(d.createTextNode(transicao.getRead()));
+                    transition.appendChild(from);
+                    transition.appendChild(to);
+                    transition.appendChild(read);
+                    automato.appendChild(transition);
+                }
+                
+                
+                
+                // Adicionando automato como filho de raiz
+                // definindo o atributo do post
+                //Attr attr = d.createAttribute("id");
+                //long currentTimeStamp = System.currentTimeMillis();
+                //attr.setValue("_" + currentTimeStamp);
+                //post.setAttributeNode(attr);
+
+                // definindo valor da postagem na tag text
+                //Element textoRecebido = d.createElement("Text");
+                //textoRecebido.appendChild(d.createTextNode(valor));
+                //post.appendChild(textoRecebido);
+
+                // construção do XML formatado
+                TransformerFactory tf = TransformerFactory.newInstance();
+                Transformer t = tf.newTransformer();
+                t.setOutputProperty(OutputKeys.INDENT, "yes"); // configurar a saída formatada
+                t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2"); // configurar a quantidade de
+                                                                                       // espaços de indentação
+                DOMSource domSource = new DOMSource(d);
+                StreamResult streamResult = new StreamResult(new File(arquivo));
+
+                // juntar o conteúdo ao arquivo criado
+                t.transform(domSource, streamResult);
+                System.out.println("Criado");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                System.out.println("Diretório " + System.getProperty("user.dir"));
+            }
+        }
+
     }
 
 }

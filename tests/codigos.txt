@@ -69,3 +69,55 @@ System.out.println("Imprimindo listas criada na condição 3.2");
 
  }
  }
+
+ for (State state : novosEstados) {
+            System.out.println("------------------------");
+            System.out.println("Id = " + state.getId());
+            System.out.println("Id = " + state.getNa());
+            System.out.println("------------------------");
+        }
+
+    public List<Transition> unificarTransicoes(List<State> novosEstados, List<Transition> transicoes, List<State> estados) {
+        List<Integer> novosIds = new ArrayList<>();
+        List<Integer> idsRemovidos = new ArrayList<>();
+        for(State estado : novosEstados){
+            novosIds.add(estado.getId());
+        }
+        for(State estado: estados){
+            if(!novosIds.contains(estado.getId())){
+                idsRemovidos.add(estado.getId());
+                
+            }
+        }
+        System.out.println("--------------------------------");
+        System.out.println("Ids Removidos: ");
+        for (Integer integer : idsRemovidos) {
+            System.out.println(integer);
+        }
+        System.out.println("--------------------------------");
+        List<Transition> novasTransicoes = new ArrayList<>();
+        for (Transition transicao : transicoes) {
+            if(!idsRemovidos.contains(transicao.getFrom())){
+                novasTransicoes.add(transicao);
+            }
+        }
+        for (Transition transicao : novasTransicoes) {
+            if(idsRemovidos.contains(transicao.getTo())){
+                for(State estado : novosEstados){
+                    if(estado.getLabel().contains(Integer.toString(transicao.getTo()))){
+                        transicao.setTo(Integer.parseInt(estado.getLabel().split(" ")[0]));
+                    }
+                }
+            }
+        }
+        for (Transition transition : novasTransicoes) {
+            System.out.println("--------------------------------");
+            System.out.println("From = " + transition.getFrom());
+            System.out.println("To = " + transition.getTo());
+            System.out.println("Read = " + transition.getRead());
+            System.out.println("--------------------------------");
+        }
+        
+
+        return novasTransicoes;
+    }

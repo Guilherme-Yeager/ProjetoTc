@@ -11,10 +11,14 @@ public class Minimization {
     public void minimizarAutomato(Arquivo arquivo, ValidarAutomato validarAutomato) {
         List<State> estados = arquivo.listaEstados(arquivo.getDoc());
         HashMap<String, CombinedState> paresEstados = this.geraTabela(estados);
-        // List<Transition> transicoes = utilities.Arquivo.listaTransicoes(doc);
         this.marcarTrivialmenteNaoEquivalente(paresEstados, estados);
         this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);
+
         List<State> novosEstados = this.unificarEstados(paresEstados, estados);
+        List<Transition> transicoes = arquivo.listaTransicoes(arquivo.getDoc());
+        List<Transition> novasTransicoes = this.unificarTransicoes(novosEstados, transicoes, estados);
+        arquivo.gravarAutomato(novosEstados, novasTransicoes);
+
     }
 
     // Passo 1
@@ -134,7 +138,7 @@ public class Minimization {
                             paresEstados.get(chaveEstado).getQu().getName()
                                     + paresEstados.get(chaveEstado).getQv().getName(),
                             paresEstados.get(chaveEstado).getQu().getIsInitial()
-                                    || paresEstados.get(chaveEstado).getQv().getIsInitial() == true ? true : false,
+                                    || paresEstados.get(chaveEstado).getQv().getIsInitial() ? true : false,
                             paresEstados.get(chaveEstado).getQu().getIsFinal() ? true : false,
                             paresEstados.get(chaveEstado).getQu().getX(), paresEstados.get(chaveEstado).getQu().getY(),
                             Integer.toString(paresEstados.get(chaveEstado).getQu().getId())
@@ -151,7 +155,8 @@ public class Minimization {
                     break;
                 }
             }
-            if(adicionarEstado){
+            if (adicionarEstado) {
+                estado.setLabel("");
                 estadosRestante.add(estado);
             }
             adicionarEstado = true;
@@ -159,12 +164,37 @@ public class Minimization {
         novosEstados.addAll(estadosRestante);
         Comparator<State> comparador = Comparator.comparing(State::getId);
         Collections.sort(novosEstados, comparador);
-        int cont = 0;
-        for (State estado : novosEstados) {
-            estado.setId(cont);
-            cont++;
-        }
         return novosEstados;
+    }
+
+    public List<Transition> unificarTransicoes(List<State> novosEstados, List<Transition> transicoes, List<State> estados) {
+        List<Integer> novosIds = new ArrayList<>();
+        List<Integer> idsRemovidos = new ArrayList<>();
+        for(State estado : novosEstados){
+            novosIds.add(estado.getId());
+        }
+        for(State estado: estados){
+            if(!novosIds.contains(estado.getId())){
+                idsRemovidos.add(estado.getId());
+                
+            }
+        }
+        List<Transition> novasTransicoes = new ArrayList<>();
+        for (Transition transicao : transicoes) {
+            if(!idsRemovidos.contains(transicao.getFrom())){
+                novasTransicoes.add(transicao);
+            }
+        }
+        for (Transition transicao : novasTransicoes) {
+            if(idsRemovidos.contains(transicao.getTo())){
+                for(State estado : novosEstados){
+                    if(estado.getLabel().contains(Integer.toString(transicao.getTo()))){
+                        transicao.setTo(Integer.parseInt(estado.getLabel().split(" ")[0]));
+                    }
+                }
+            }
+        }
+        return novasTransicoes;
     }
 
 }
