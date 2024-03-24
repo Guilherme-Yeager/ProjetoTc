@@ -2,7 +2,10 @@ package utilities;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+
 
 import javax.swing.JFileChooser;
 
@@ -25,16 +28,38 @@ import org.w3c.dom.NodeList;
 import org.w3c.dom.Element;
 
 public class Arquivo {
+    private List<Transition> listaTransicoes;
+    private List<State> listaEstadoss;
+    
     private Document doc;
 
+
+
+
+    public List<State> getListaEstadoss() {
+        return listaEstadoss;
+    }
+    
+    public void setListaEstadoss(List<State> listaEstadoss) {
+        this.listaEstadoss = listaEstadoss;
+    }
+    
+    public List<Transition> getListaTransicoes() {
+        return listaTransicoes;
+    }
+
+    public void setListaTransicoes(List<Transition> listaTransicoes) {
+        this.listaTransicoes = listaTransicoes;
+    }
+    
     public Document getDoc() {
         return doc;
     }
-
+    
     public void setDoc(Document doc) {
         this.doc = doc;
     }
-
+    
     /**
      * Método para o usuário selecionar um arquivo .jff
      * 
@@ -112,9 +137,12 @@ public class Arquivo {
             Transition transition = new Transition(from, to, read);
             transicoesInfo.add(transition);
         }
+        this.ajustarTransicoes(transicoesInfo);
+        this.setListaTransicoes(transicoesInfo);
         return transicoesInfo;
     }
 
+    
     /**
      * Método para o processar o documento para obter
      * a lista de estados do autômato
@@ -124,7 +152,7 @@ public class Arquivo {
      */
     public List<State> listaEstados(Document doc) {
         NodeList listaEstados = doc.getElementsByTagName("state");
-        String name = "", label = "";
+        String name = "";
         int id = 0;
         float x = 0.f, y = 0.f;
         boolean isInitial = false, isFinal = false;
@@ -160,29 +188,33 @@ public class Arquivo {
             isInitial = false;
             isFinal = false;
         }
+        Comparator<State> comparador = Comparator.comparing(State::getId);
+        Collections.sort(listaEstadosInfo, comparador);
+        this.ajustarEstados(listaEstadosInfo);
+        this.setListaEstadoss(listaEstadosInfo);
         return listaEstadosInfo;
     }
-
+    
     public void gravarAutomato(List<State> novosEstados, List<Transition> novasTransicoes) {
         JFileChooser jFileChooser = new JFileChooser();
         if (jFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             File automatoMinimizado = jFileChooser.getSelectedFile();
             automatoMinimizado = new File(automatoMinimizado.getAbsoluteFile() + ".jff");
-
+            
             try {
                 String arquivo = automatoMinimizado.getAbsolutePath();
-
+                
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dc = dbf.newDocumentBuilder();
                 Document d = dc.newDocument();
-
+                
                 Element raiz = d.createElement("structure");
                 d.appendChild(raiz);
-
+                
                 Element type = d.createElement("type");
                 type.appendChild(d.createTextNode("fa"));
                 raiz.appendChild(type);
-
+                
                 Element automato = d.createElement("automaton");
                 raiz.appendChild(automato);
                 for (State estado : novosEstados) {
@@ -227,12 +259,12 @@ public class Arquivo {
                     transition.appendChild(read);
                     automato.appendChild(transition);
                 }
-
+                
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer t = tf.newTransformer();
                 t.setOutputProperty(OutputKeys.INDENT, "yes");
                 t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-
+                
                 DOMSource domSource = new DOMSource(d);
                 StreamResult streamResult = new StreamResult(new File(arquivo));
                 t.transform(domSource, streamResult);
@@ -248,6 +280,36 @@ public class Arquivo {
                 System.err.println("Erro inesperado: " + e.getMessage());
                 e.printStackTrace();
             }
+        }
+    }
+    
+    private void ajustarTransicoes(List<Transition> transicoesInfo) {
+
+        for (State estado : this.getListaEstadoss()) {
+            if(estado.getIdAntigo() == null){
+                continue;
+            }
+            for (Transition transicao : transicoesInfo) {
+                if(transicao.getFrom() == estado.getIdAntigo()){
+                    transicao.setFrom(estado.getId());
+                }
+                if(transicao.getTo() == estado.getIdAntigo()){
+                    transicao.setTo(estado.getId());
+                }
+            }  
+        }
+        
+    }
+
+    public void ajustarEstados(List<State> listaEstadosInfo){
+        int tam = listaEstadosInfo.size();
+        for (int i = 0; i < tam; i++) {
+            if(listaEstadosInfo.get(i).getId() != i){
+                listaEstadosInfo.get(i).setIdAntigo(listaEstadosInfo.get(i).getId());
+                listaEstadosInfo.get(i).setId(i);
+                listaEstadosInfo.get(i).setName("q" + i);
+            }
+            
         }
     }
 }

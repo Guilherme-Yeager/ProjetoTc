@@ -5,21 +5,16 @@ public class Main {
         Arquivo arquivo = new Arquivo();
         String caminho = arquivo.obterCaminho();
         if (caminho != null) {
+            arquivo.listaEstados(arquivo.getDoc());
+            arquivo.listaTransicoes(arquivo.getDoc());
             ValidarAutomato validarAutomato = new ValidarAutomato(arquivo);
             if (validarAutomato.isAfd(arquivo.getDoc())) {
                 if (validarAutomato.isComplete(arquivo.getDoc())) {
                     if (validarAutomato.accessibleStates(arquivo.getDoc())) {
                         Minimization minimizacao = new Minimization();
-                        System.out.println("Foi");
                         minimizacao.minimizarAutomato(arquivo, validarAutomato);
-                    }else{
-                        System.out.println(3);
                     }
-                }else{
-                    System.out.println(2);
                 }
-            }else{
-                System.out.println(1);
             }
         }
     }

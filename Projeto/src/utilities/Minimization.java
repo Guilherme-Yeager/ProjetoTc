@@ -11,14 +11,14 @@ import java.util.Set;
 public class Minimization {
 
     public void minimizarAutomato(Arquivo arquivo, ValidarAutomato validarAutomato) {
-        List<State> estados = arquivo.listaEstados(arquivo.getDoc());
+        List<State> estados = arquivo.getListaEstadoss();
         HashMap<String, CombinedState> paresEstados = this.geraTabela(estados);
         this.marcarTrivialmenteNaoEquivalente(paresEstados, estados);
         this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);
 
         List<State> novosEstados = this.unificarEstados(paresEstados, estados);
         this.otimizarEstados(novosEstados);
-        List<Transition> transicoes = arquivo.listaTransicoes(arquivo.getDoc());
+        List<Transition> transicoes = arquivo.getListaTransicoes();
         List<Transition> novasTransicoes = this.unificarTransicoes(novosEstados, transicoes, estados);
         arquivo.gravarAutomato(novosEstados, novasTransicoes);
 
@@ -167,8 +167,8 @@ public class Minimization {
     }
 
     public void acharPuPv(List<State> listaPuPv, State qu, State qv, String simbolo, Arquivo arquivo) {
-        List<Transition> listaTransitions = arquivo.listaTransicoes(arquivo.getDoc());
-        List<State> listaEstStates = arquivo.listaEstados(arquivo.getDoc());
+        List<Transition> listaTransitions = arquivo.getListaTransicoes();
+        List<State> listaEstStates = arquivo.getListaEstadoss();
         boolean achouPuPv = false;
         for (Transition transition : listaTransitions) {
             if (transition.getFrom() == qu.getId()) {

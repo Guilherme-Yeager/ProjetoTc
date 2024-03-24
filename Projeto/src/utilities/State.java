@@ -2,12 +2,13 @@ package utilities;
 
 public class State {
     private int id;
+    private Integer idAntigo;
     private String name;
     private float x, y;
     private Boolean isInitial;
     private Boolean isFinal;
     private String label;
-
+    
     public State(int id, String name, Boolean isInitial, Boolean isFinal, float x, float y, String label) {
         this.id = id;
         this.name = name;
@@ -16,6 +17,15 @@ public class State {
         this.x = x;
         this.y = y;
         this.label = label;
+        this.idAntigo = null;
+    }
+
+    public Integer getIdAntigo() {
+        return idAntigo;
+    }
+
+    public void setIdAntigo(int idAntigo) {
+        this.idAntigo = idAntigo;
     }
     
     public String getLabel() {
