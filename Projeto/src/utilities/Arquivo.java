@@ -152,12 +152,10 @@ public class Arquivo {
                         isInitial = true;
                     } else if (noFilho.getNodeName() == "final") {
                         isFinal = true;
-                    } else if (noFilho.getNodeName() == "label") {
-                        label = noFilho.getTextContent();
-                    }
+                    } 
                 }
             }
-            State state = new State(id, name, isInitial, isFinal, x, y, label);
+            State state = new State(id, name, isInitial, isFinal, x, y, "");
             listaEstadosInfo.add(state);
             isInitial = false;
             isFinal = false;
@@ -240,6 +238,7 @@ public class Arquivo {
                 t.transform(domSource, streamResult);
                 
                 System.out.println("Arquivo salvo com sucesso!");
+                System.gc();
                 
                 
             } catch (ParserConfigurationException | TransformerException e) {

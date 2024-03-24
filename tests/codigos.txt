@@ -122,3 +122,23 @@ System.out.println("Imprimindo listas criada na condição 3.2");
 
         return novasTransicoes;
     }
+
+            System.out.println("------- Labels ---------");
+        for (String string : labels) {
+            System.out.println(string);
+        }
+        System.out.println("------- indexParaRemover ---------");
+        for (Integer inter : indexParaRemover) {
+            System.out.println(inter);
+        }
+        int removidos = 0;
+        for (int i = 0; i < novosEstados.size(); i++) {
+            for(Integer index : indexParaRemover){
+                if(i == index - removidos){
+                    novosEstados.remove(i);
+                    i--;
+                    removidos++;
+                    break;
+                }
+            }
+        }

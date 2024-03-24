@@ -10,9 +10,16 @@ public class Main {
                 if (validarAutomato.isComplete(arquivo.getDoc())) {
                     if (validarAutomato.accessibleStates(arquivo.getDoc())) {
                         Minimization minimizacao = new Minimization();
+                        System.out.println("Foi");
                         minimizacao.minimizarAutomato(arquivo, validarAutomato);
+                    }else{
+                        System.out.println(3);
                     }
+                }else{
+                    System.out.println(2);
                 }
+            }else{
+                System.out.println(1);
             }
         }
     }

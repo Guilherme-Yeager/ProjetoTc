@@ -17,10 +17,85 @@ public class Minimization {
         this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);
 
         List<State> novosEstados = this.unificarEstados(paresEstados, estados);
+        this.otimizarEstados(novosEstados);
         List<Transition> transicoes = arquivo.listaTransicoes(arquivo.getDoc());
-        System.exit(0);
-        //List<Transition> novasTransicoes = this.unificarTransicoes(novosEstados, transicoes, estados);
-        //arquivo.gravarAutomato(novosEstados, novasTransicoes);
+        List<Transition> novasTransicoes = this.unificarTransicoes(novosEstados, transicoes, estados);
+        arquivo.gravarAutomato(novosEstados, novasTransicoes);
+
+    }
+
+    private void otimizarEstados(List<State> novosEstados) {
+        Set<Integer> indexParaRemover = new HashSet<>();
+        List<String> labels = new ArrayList<>();
+        for (int i = 0; i < novosEstados.size() - 1; i++) {
+            if (novosEstados.get(i).getLabel().isEmpty()) {
+                continue;
+            }
+            
+            String label1 = novosEstados.get(i).getLabel();
+            
+            for (int j = i + 1; j < novosEstados.size(); j++) {
+                if (novosEstados.get(j).getLabel().isEmpty()) {
+                    continue;
+                }
+                
+                String label2 = novosEstados.get(j).getLabel();
+                boolean emComum = false;
+                
+                for (String l : label2.split(" ")) {
+                    if (label1.contains(l)) {
+                        emComum = true;
+                        break;
+                    }
+                }
+                
+                if (emComum) {
+                    StringBuilder novoLabel = new StringBuilder(label1);
+                    for (String l : label2.split(" ")) {
+                        if (!label1.contains(l)) {
+                            novoLabel.append(" ").append(l);
+                        }
+                    }
+                    labels.add(novoLabel.toString());
+                    indexParaRemover.add(j);
+                }
+            }
+        }
+        for (int i = 0; i < labels.size(); i++) {
+            for (int j = i + 1; j < labels.size(); j++) {
+                if (labels.get(i).charAt(0) == labels.get(j).charAt(0)) {
+                    labels.remove(j);
+                    j--;
+                }
+            }
+        }
+
+        int removidos = 0;
+        for (int i = 0; i < novosEstados.size(); i++) {
+            for(Integer index : indexParaRemover){
+                if(i == index - removidos){
+                    novosEstados.remove(i);
+                    i--;
+                    removidos++;
+                    break;
+                }
+            }
+        }
+
+        for (int i = 0; i < novosEstados.size(); i++) {
+            for(String label : labels){
+                if(!novosEstados.get(i).getLabel().isEmpty() && label.contains(novosEstados.get(i).getLabel())){
+                    novosEstados.get(i).setLabel(label);
+                    String name = "";
+                    for(String s : label.split(" ")){
+                        name += "q" + s;
+                    }
+                    novosEstados.get(i).setName(name);
+                    break;
+                }
+               
+            }
+        }
 
     }
 
@@ -38,7 +113,7 @@ public class Minimization {
 
     // Passo 2
     public void marcarTrivialmenteNaoEquivalente(HashMap<String, CombinedState> paresEstados, List<State> estados) {
-        for (int i = 0; i < estados.size(); i++) { 
+        for (int i = 0; i < estados.size(); i++) {
             for (int j = i + 1; j < estados.size(); j++) {
                 String chave = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
                 if (paresEstados.get(chave).getQu().getIsFinal()) {
@@ -153,7 +228,7 @@ public class Minimization {
             }
         }
         for (State state : estados) {
-            if(!idsConjuntoUnificados.contains(state.getId())){
+            if (!idsConjuntoUnificados.contains(state.getId())) {
                 novosEstados.add(state);
             }
         }
@@ -162,28 +237,29 @@ public class Minimization {
         return novosEstados;
     }
 
-    public List<Transition> unificarTransicoes(List<State> novosEstados, List<Transition> transicoes, List<State> estados) {
+    public List<Transition> unificarTransicoes(List<State> novosEstados, List<Transition> transicoes,
+            List<State> estados) {
         List<Integer> novosIds = new ArrayList<>();
         List<Integer> idsRemovidos = new ArrayList<>();
-        for(State estado : novosEstados){
+        for (State estado : novosEstados) {
             novosIds.add(estado.getId());
         }
-        for(State estado: estados){
-            if(!novosIds.contains(estado.getId())){
+        for (State estado : estados) {
+            if (!novosIds.contains(estado.getId())) {
                 idsRemovidos.add(estado.getId());
-                
+
             }
         }
         List<Transition> novasTransicoes = new ArrayList<>();
         for (Transition transicao : transicoes) {
-            if(!idsRemovidos.contains(transicao.getFrom())){
+            if (!idsRemovidos.contains(transicao.getFrom())) {
                 novasTransicoes.add(transicao);
             }
         }
         for (Transition transicao : novasTransicoes) {
-            if(idsRemovidos.contains(transicao.getTo())){
-                for(State estado : novosEstados){
-                    if(estado.getLabel().contains(Integer.toString(transicao.getTo()))){
+            if (idsRemovidos.contains(transicao.getTo())) {
+                for (State estado : novosEstados) {
+                    if (estado.getLabel().contains(Integer.toString(transicao.getTo()))) {
                         transicao.setTo(Integer.parseInt(estado.getLabel().split(" ")[0]));
                     }
                 }
