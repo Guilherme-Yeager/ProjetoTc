@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class Minimization {
 
@@ -16,8 +18,9 @@ public class Minimization {
 
         List<State> novosEstados = this.unificarEstados(paresEstados, estados);
         List<Transition> transicoes = arquivo.listaTransicoes(arquivo.getDoc());
-        List<Transition> novasTransicoes = this.unificarTransicoes(novosEstados, transicoes, estados);
-        arquivo.gravarAutomato(novosEstados, novasTransicoes);
+        System.exit(0);
+        //List<Transition> novasTransicoes = this.unificarTransicoes(novosEstados, transicoes, estados);
+        //arquivo.gravarAutomato(novosEstados, novasTransicoes);
 
     }
 
@@ -35,7 +38,7 @@ public class Minimization {
 
     // Passo 2
     public void marcarTrivialmenteNaoEquivalente(HashMap<String, CombinedState> paresEstados, List<State> estados) {
-        for (int i = 0; i < estados.size(); i++) { // Gerar a combinação de pares de autômatos (tabela), passo 1
+        for (int i = 0; i < estados.size(); i++) { 
             for (int j = i + 1; j < estados.size(); j++) {
                 String chave = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
                 if (paresEstados.get(chave).getQu().getIsFinal()) {
@@ -130,10 +133,13 @@ public class Minimization {
     public List<State> unificarEstados(HashMap<String, CombinedState> paresEstados, List<State> estados) {
         String chaveEstado;
         List<State> novosEstados = new ArrayList<>();
+        Set<Integer> idsConjuntoUnificados = new HashSet<>();
         for (int i = 0; i < estados.size(); i++) {
             for (int j = i + 1; j < estados.size(); j++) {
                 chaveEstado = Integer.toString(estados.get(i).getId()) + Integer.toString(estados.get(j).getId());
                 if (paresEstados.get(chaveEstado).isEquivalent()) {
+                    idsConjuntoUnificados.add(paresEstados.get(chaveEstado).getQu().getId());
+                    idsConjuntoUnificados.add(paresEstados.get(chaveEstado).getQv().getId());
                     novosEstados.add(new State(paresEstados.get(chaveEstado).getQu().getId(),
                             paresEstados.get(chaveEstado).getQu().getName()
                                     + paresEstados.get(chaveEstado).getQv().getName(),
@@ -146,22 +152,11 @@ public class Minimization {
                 }
             }
         }
-        List<State> estadosRestante = new ArrayList<>();
-        boolean adicionarEstado = true;
-        for (State estado : estados) {
-            for (State novoEstado : novosEstados) {
-                if (estado.getId() == novoEstado.getId() || estado.getId() == novoEstado.getId() + 1) {
-                    adicionarEstado = false;
-                    break;
-                }
+        for (State state : estados) {
+            if(!idsConjuntoUnificados.contains(state.getId())){
+                novosEstados.add(state);
             }
-            if (adicionarEstado) {
-                estado.setLabel("");
-                estadosRestante.add(estado);
-            }
-            adicionarEstado = true;
         }
-        novosEstados.addAll(estadosRestante);
         Comparator<State> comparador = Comparator.comparing(State::getId);
         Collections.sort(novosEstados, comparador);
         return novosEstados;

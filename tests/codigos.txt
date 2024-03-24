@@ -70,12 +70,13 @@ System.out.println("Imprimindo listas criada na condição 3.2");
  }
  }
 
- for (State state : novosEstados) {
+        for (State state : novosEstados) {
             System.out.println("------------------------");
             System.out.println("Id = " + state.getId());
-            System.out.println("Id = " + state.getNa());
+            System.out.println("Id = " + state.getName());
             System.out.println("------------------------");
         }
+        System.exit(0);
 
     public List<Transition> unificarTransicoes(List<State> novosEstados, List<Transition> transicoes, List<State> estados) {
         List<Integer> novosIds = new ArrayList<>();
