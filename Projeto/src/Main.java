@@ -10,6 +10,7 @@ public class Main {
             ValidarAutomato validarAutomato = new ValidarAutomato(arquivo);
             if (validarAutomato.isAfd(arquivo.getDoc())) {
                 if (validarAutomato.isComplete(arquivo.getDoc())) {
+                    System.out.println("É completo");
                     if (validarAutomato.accessibleStates(arquivo.getDoc())) {
                         Minimization minimizacao = new Minimization();
                         minimizacao.minimizarAutomato(arquivo, validarAutomato);

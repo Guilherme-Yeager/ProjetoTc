@@ -30,11 +30,7 @@ import org.w3c.dom.Element;
 public class Arquivo {
     private List<Transition> listaTransicoes;
     private List<State> listaEstadoss;
-    
     private Document doc;
-
-
-
 
     public List<State> getListaEstados() {
         return listaEstadoss;

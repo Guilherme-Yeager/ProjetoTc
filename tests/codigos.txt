@@ -142,3 +142,25 @@ System.out.println("Imprimindo listas criada na condição 3.2");
                 }
             }
         }
+
+        System.out.println("{ " + paresEstados.get(chaveEstado).getQu().getId() + " " + paresEstados.get(chaveEstado).getQv().getId() + " - " + listaPuPv.get(0).getId() + " " +listaPuPv.get(1).getId() + "}");
+int cont1 = 0, cont2 = 0;
+        for (State state : this.getListaEstados()) {
+            System.out.println("------------------------");
+            System.out.println("Id = " + state.getId());
+            System.out.println("Id = " + state.getName());
+            System.out.println("------------------------");
+            cont1++;
+        }
+        
+        for (Transition transition :  this.getListaTransicoes()) {
+            System.out.println("--------------------------------");
+            System.out.println("From = " + transition.getFrom());
+            System.out.println("To = " + transition.getTo());
+            System.out.println("Read = " + transition.getRead());
+            System.out.println("--------------------------------");
+            cont2++;
+        }
+        System.out.println(cont1);
+        System.out.println(cont2);
+        

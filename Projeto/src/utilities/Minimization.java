@@ -15,7 +15,6 @@ public class Minimization {
         HashMap<String, CombinedState> paresEstados = this.geraTabela(estados);
         this.marcarTrivialmenteNaoEquivalente(paresEstados, estados);
         this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);
-
         List<State> novosEstados = this.unificarEstados(paresEstados, estados);
         this.otimizarEstados(novosEstados);
         List<Transition> transicoes = arquivo.getListaTransicoes();
@@ -168,7 +167,7 @@ public class Minimization {
 
     public void acharPuPv(List<State> listaPuPv, State qu, State qv, String simbolo, Arquivo arquivo) {
         List<Transition> listaTransitions = arquivo.getListaTransicoes();
-        List<State> listaEstStates = arquivo.getListaEstadoss();
+        List<State> listaEstStates = arquivo.getListaEstados();
         boolean achouPuPv = false;
         for (Transition transition : listaTransitions) {
             if (transition.getFrom() == qu.getId()) {
@@ -196,12 +195,22 @@ public class Minimization {
     }
 
     public void limparListas(CombinedState combinedState) {
-        for (CombinedState state : combinedState.getListaEstados()) {
-            limparListas(state);
-            state.setEquivalent(false);
-            state.getListaEstados().clear();
+        Set<CombinedState> visitados = new HashSet<>();
+        limparRecursivamente(combinedState, visitados);
+        for (CombinedState combinedStateParaEliminar : visitados) {
+            combinedStateParaEliminar.setEquivalent(false);
+            combinedStateParaEliminar.getListaEstados().clear();
         }
+    }
 
+    private void limparRecursivamente(CombinedState currentState, Set<CombinedState> visitados) {
+        if (visitados.contains(currentState)) {
+            return;
+        }
+        visitados.add(currentState);
+        for (CombinedState state : currentState.getListaEstados()) {
+            limparRecursivamente(state, visitados);
+        }
     }
 
     // Passo 4
