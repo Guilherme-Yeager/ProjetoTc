@@ -23,18 +23,15 @@ class Screen:
             componente.destroy()
 
 def executar_jar(caminho_para_jar):
-    # Executar o arquivo JAR usando o comando java -jar
     subprocess.Popen(['java', '-jar', caminho_para_jar])
 
-# Caminho para o arquivo JAR
-caminho_jar = 'D:\GitHub\ProjetoTc\Projeto\src/bin/App.jar'
 
-# Criando uma instância da janela
+caminho_jar = 'D:\GitHub\ProjetoTc\Projeto\src/bin/App.jar'
 janela = Screen()
 janela.configureWindow()
 
-# Criando um botão na janela principal
-customtkinter.set_appearance_mode("Dark") # Other: "Light", "System" (only macOS)
+
+customtkinter.set_appearance_mode("Dark")
 
 button = customtkinter.CTkButton(master=janela.screen,
                                  fg_color=("black"), 
@@ -42,5 +39,4 @@ button = customtkinter.CTkButton(master=janela.screen,
                                  command= lambda : executar_jar(caminho_jar))
 button.place(relx=0.5, rely=0.5, anchor=tk.CENTER)
 
-# Iniciando o loop principal do tkinter
 janela.screen.mainloop()
