@@ -11,7 +11,7 @@ import java.util.Set;
 public class Minimization {
 
     public void minimizarAutomato(Arquivo arquivo, ValidarAutomato validarAutomato) {
-        List<State> estados = arquivo.getListaEstadoss();
+        List<State> estados = arquivo.getListaEstados();
         HashMap<String, CombinedState> paresEstados = this.geraTabela(estados);
         this.marcarTrivialmenteNaoEquivalente(paresEstados, estados);
         this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);

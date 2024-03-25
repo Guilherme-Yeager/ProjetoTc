@@ -13,8 +13,14 @@ public class Main {
                     if (validarAutomato.accessibleStates(arquivo.getDoc())) {
                         Minimization minimizacao = new Minimization();
                         minimizacao.minimizarAutomato(arquivo, validarAutomato);
+                    }else{
+                        System.out.println("Não é acessível");
                     }
+                }else{
+                    System.out.println("Não é completo");
                 }
+            }else{
+                System.out.println("Não é afd");
             }
         }
     }

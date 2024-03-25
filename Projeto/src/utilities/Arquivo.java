@@ -36,7 +36,7 @@ public class Arquivo {
 
 
 
-    public List<State> getListaEstadoss() {
+    public List<State> getListaEstados() {
         return listaEstadoss;
     }
     
@@ -285,7 +285,7 @@ public class Arquivo {
     
     private void ajustarTransicoes(List<Transition> transicoesInfo) {
 
-        for (State estado : this.getListaEstadoss()) {
+        for (State estado : this.getListaEstados()) {
             if(estado.getIdAntigo() == null){
                 continue;
             }

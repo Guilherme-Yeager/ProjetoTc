@@ -79,13 +79,22 @@ public class ValidarAutomato {
                 }
             }
         } while (true);
+        this.setSigma(sigma);
         try {
             List<Transition> transicoesInfo = this.getArquivo().listaTransicoes(doc);
-            Set<String> sigmaDoAutomato = new HashSet<>();
-            for (int i = 0; i < transicoesInfo.size(); i++) {
-                sigmaDoAutomato.add(transicoesInfo.get(i).getRead());
+            List<State> estados = this.getArquivo().getListaEstados();
+            Set<String> sigmaDoEstado = new HashSet<>();
+            for (State state : estados) {
+                for (int i = 0; i < transicoesInfo.size(); i++) {
+                    if(state.getId() == transicoesInfo.get(i).getFrom()){
+                        sigmaDoEstado.add(transicoesInfo.get(i).getRead());
+                    }
+                }
+                if(!sigma.equals(sigmaDoEstado)){
+                    return false;
+                }
+                
             }
-            this.setSigma(sigmaDoAutomato);
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -112,14 +121,14 @@ public class ValidarAutomato {
         return conjEstadosAlcancados.equals(conjEstados);
     }
 
-    public static void verificarEstadosAlcancados(List<State> estados, List<State> estadosAlcancados, State estadoAtual,
+    public  void verificarEstadosAlcancados(List<State> estados, List<State> estadosAlcancados, State estadoAtual,
             List<Transition> transicoes) {
         estadosAlcancados.add(estadoAtual);
         for (Transition transicao : transicoes) {
             if (transicao.getFrom() == estadoAtual.getId()) {
                 State proximoEstado = estados.get(transicao.getTo());
                 if (!estadosAlcancados.contains(proximoEstado)) {
-                    verificarEstadosAlcancados(estados, estadosAlcancados, proximoEstado, transicoes);
+                    this.verificarEstadosAlcancados(estados, estadosAlcancados, proximoEstado, transicoes);
                 }
             }
         }
