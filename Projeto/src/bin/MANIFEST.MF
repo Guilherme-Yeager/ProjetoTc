@@ -1,3 +1,0 @@
-Main-Class: Main
-Built-By: Guilherme Lima Santos
-
