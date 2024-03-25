@@ -193,6 +193,7 @@ public class Arquivo {
     
     public void gravarAutomato(List<State> novosEstados, List<Transition> novasTransicoes) {
         JFileChooser jFileChooser = new JFileChooser();
+        jFileChooser.setDialogTitle("Salve o arquivo .jff");
         if (jFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             File automatoMinimizado = jFileChooser.getSelectedFile();
             automatoMinimizado = new File(automatoMinimizado.getAbsoluteFile() + ".jff");

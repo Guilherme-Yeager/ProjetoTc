@@ -90,12 +90,7 @@ public class ValidarAutomato {
                         sigmaDoEstado.add(transicoesInfo.get(i).getRead());
                     }
                 }
-                if(sigmaDoEstado.isEmpty()){
-                    System.out.println("dfsjpioafds");
-                    
-                    return false;
-                }
-                if(!sigma.equals(sigmaDoEstado)){
+                if(sigmaDoEstado.isEmpty() || !sigma.equals(sigmaDoEstado)){
                     return false;
                 }
                 sigmaDoEstado.clear();
