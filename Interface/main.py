@@ -1,10 +1,8 @@
 import os
 import subprocess as sb
-from tkinter import Tk, Button, Label
-
+from tkinter import Tk, Button, Label, Canvas, PhotoImage
 
 class Screen:
-
     def __init__(self) -> None:
         self.screen = Tk()
 
@@ -20,12 +18,27 @@ class Screen:
     def closeWindow(self) -> None:
         self.screen.destroy()
 
-    def cleanWindow(componente) -> None:
-        for componente in componente.screen.winfo_children():
+    def cleanWindow(self) -> None:
+        for componente in self.screen.winfo_children():
             componente.destroy()
 
 def novoProcessoJava(caminhoJar):
-    sb.Popen(['java', '-jar', caminhoJar])
+    try:
+        sb.Popen(['java', '-jar', caminhoJar])
+    except sb.CalledProcessError:
+        print("Verifique a configuração do Java.")
+
+def dica(botao, imgs):
+    image = botao.cget("image")
+    if image == str(imgs[0]):
+        print("oi")
+        botao.config(image=imgs[1])
+        botao.config(command=lambda: dica(botao, imgs))
+    
+    elif image == str(imgs[1]):
+        print("oioi")
+        botao.config(image=imgs[0])
+        botao.config(command=lambda: dica(botao, imgs))
 
 if __name__ == '__main__':
     try:
@@ -44,27 +57,22 @@ if __name__ == '__main__':
         'Complemento': "",
         'Estrela': "",
         'Equivalência': "",
-        'Minimizacão': dir + "/ProjetoMinimizacao/src/App.jar",
+        'Minimização': dir + "/ProjetoMinimizacao/src/App.jar",
     }
     
     janela = Screen()
     janela.configureWindow()
-    label_eventos = Label(
-                        master=janela.screen,
-                        width=25,
-                        height=40, 
-                        background='#1C1C1C',
-                    )
-    label_eventos.place(x=0, y=0)
-    lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimizacão']
+
+    canvas = Canvas(janela.screen, bg='#1C1C1C')
+    canvas.pack(side='left', fill='both', expand=True)
+
+    lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
     buttons = []
     for i in range(7):
-        dis = 'disable'
-        if i == 6:
-            dis = 'normal'
+        dis = 'disable' if i != 6 else 'normal'
         buttons.append(
             Button(
-                master=label_eventos,
+                master=canvas,
                 background='#D9D9D9', 
                 font=('Arial', 12, 'bold'),
                 text=lista_eventos[i],
@@ -72,24 +80,36 @@ if __name__ == '__main__':
                 borderwidth=4,
                 height=3,
                 state=dis,
-                command= lambda tipo = lista_eventos[i]: novoProcessoJava(caminhosJar[tipo]),
+                command=lambda caminho=lista_eventos[i]: novoProcessoJava(caminhosJar[caminho]),
             )
         )
-        buttons[i].place(x=87, y=98 + (i * 77), anchor='center')
+        buttons[i].place(x=28, y=50 + (i * 77))
+
     label_opercoes = Label(
-                        master=label_eventos,
-                        text= 'Operações:',
-                        font=('Arial', 14, 'bold'),
-                        fg='white',
-                        width=11,
-                        height=1, 
-                        background='#1C1C1C',
-                        )
-    label_opercoes.place(x=14, y=15)
-        
+        master=canvas,
+        text='Operações:',
+        font=('Arial', 14, 'bold'),
+        fg='white',
+        bg='#1C1C1C',
+        width=11,
+        height=1,
+    )
+    label_opercoes.place(x=25, y=12)
+    label_manipulacao = Label(
+        master=canvas,
+        bg='#E7E5E5',
+        width=450,
+        height=300,
+    )
+    label_manipulacao.place(x=190, y=0)
+    imgs = [PhotoImage(file=os.path.dirname(__file__) + "/img/lampada_apagada.png"), PhotoImage(file=os.path.dirname(__file__) + "/img/lampada_acesa.png")]
+    btDica = Button(
+            label_manipulacao,
+            image=imgs[0],
+            bg="#9A9999",
+            borderwidth=2,
+            relief="solid",
+            command=lambda: dica(btDica, imgs),
+        )
+    btDica.place(x=568, y=0)
     janela.screen.mainloop()
-    
-
-
-
-
