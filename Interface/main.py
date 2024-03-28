@@ -46,11 +46,11 @@ if __name__ == '__main__':
         exit()
     
     dir = os.path.dirname(os.path.dirname(__file__))
-
+    print(dir)
     caminhosJar = {
         'União': "",
         'Intersecção': "",
-        'Concatenação': "",
+        'Concatenação': os.path.join(dir, "ProjetoConcatenacao", "Concatenacao.jar"),
         'Complemento': "",
         'Estrela': "",
         'Equivalência': "",
@@ -60,13 +60,17 @@ if __name__ == '__main__':
     janela = Screen()
     janela.configureWindow()
 
-    canvas = Canvas(janela.screen, bg='#1C1C1C')
-    canvas.pack(side='left', fill='both', expand=True)
+    canvas = Canvas(janela.screen, bg='#1C1C1C', width=800, height=600)
+    canvas.place(x=-2, y=0)
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
     buttons = []
     for i, evento in enumerate(lista_eventos):
-        dis = 'disable' if i != 6 else 'normal'
+        dis = ''
+        if i == 6 or i == 2:
+            dis = 'normal'
+        else:
+            dis = 'disable'
         buttons.append(
             Button(
                 master=canvas,
