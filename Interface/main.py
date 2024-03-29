@@ -24,7 +24,7 @@ class Screen:
 
 def novoProcessoJava(caminhoJar):
     try:
-        sb.Popen(['java', '-jar', caminhoJar])
+        sb.Popen(['java', '-jar', caminhoJar], creationflags=sb.CREATE_NO_WINDOW)
     except sb.CalledProcessError:
         print("Verifique a configuração do Java.")
 
@@ -70,13 +70,13 @@ if __name__ == '__main__':
     dir = os.path.dirname(os.path.dirname(__file__))
     
     caminhosJar = {
-        'União': os.path.join(dir, "ProjetoUniao", "Uniao.jar"),
-        'Intersecção': os.path.join(dir, "ProjetoInterseccao", "InterApp.jar"),
-        'Concatenação': os.path.join(dir, "ProjetoConcatenacao", "Concatenacao.jar"),
-        'Complemento': os.path.join(dir, "ProjetoComplementoEstrela", "ProjetoComplemento" , "Complemento.jar"),
-        'Estrela': os.path.join(dir, "ProjetoComplementoEstrela", "ProjetoEstrela" , "Estrela.jar"),
+        'União': dir + "/ProjetoUniao/Uniao.jar",
+        'Intersecção': dir + "/ProjetoInterseccao/InterApp.jar",
+        'Concatenação': dir + "/ProjetoConcatenacao/Concatenacao.jar",
+        'Complemento': dir + "/ProjetoComplementoEstrela/ProjetoComplemento/Complemento.jar",
+        'Estrela': dir + "/ProjetoComplementoEstrela/ProjetoEstrela/Estrela.jar",
         'Equivalência': "",
-        'Minimização': os.path.join(dir, "ProjetoMinimizacao", "src", "App.jar"),
+        'Minimização': dir + "/ProjetoMinimizacao/src/App.jar",
     }
     
     janela = Screen()
