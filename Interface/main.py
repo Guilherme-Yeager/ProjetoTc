@@ -1,6 +1,6 @@
 import os
 import subprocess as sb
-from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Spinbox
+from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text, Listbox, font
 
 class Screen:
     def __init__(self) -> None:
@@ -38,6 +38,28 @@ def dica(botao, imgs):
         botao.config(image=imgs[0])
         botao.config(command=lambda: dica(botao, imgs))
 
+def addVingadorMaisForte():
+    labelAlcides = Label(
+            frame_manipulacao,
+            image=imgs[3],
+            bg="#838080",
+        )
+    labelAlcides.place(x=-15, y=332)
+
+def isText():
+    return campoTxt.get("1.0", "end-1c")
+
+def listBox(event=None):
+    print(listbox.get(listbox.curselection()))
+
+def conversaStark(event=None):
+    if(not isText() == ""):
+        addVingadorMaisForte()
+        campoTxt.delete("1.0", "end")
+        listbox.place(x=220, y=150)
+    return "break"
+    
+    
 if __name__ == '__main__':
     try:
         sb.run(['java', '--version'], stdout=sb.DEVNULL, stderr=sb.DEVNULL)
@@ -46,9 +68,9 @@ if __name__ == '__main__':
         exit()
     
     dir = os.path.dirname(os.path.dirname(__file__))
-    print(dir)
+    
     caminhosJar = {
-        'União': "",
+        'União': os.path.join(dir, "ProjetoUniao", "Uniao.jar"),
         'Intersecção': "",
         'Concatenação': os.path.join(dir, "ProjetoConcatenacao", "Concatenacao.jar"),
         'Complemento': "",
@@ -67,7 +89,7 @@ if __name__ == '__main__':
     buttons = []
     for i, evento in enumerate(lista_eventos):
         dis = ''
-        if i == 6 or i == 2:
+        if i == 6 or i == 2 or i == 0:
             dis = 'normal'
         else:
             dis = 'disable'
@@ -98,18 +120,18 @@ if __name__ == '__main__':
     label_opercoes.place(x=25, y=12)
     frame_manipulacao = Frame(
         master=canvas,
-        bg='#E7E5E5',
+        bg='#838080',
         width=610,
-        height=800,
+        height=790,
     )
-    frame_manipulacao.place(x=190, y=0)
+    frame_manipulacao.place(x=190, y=2)
     frame_navbar = Frame(
         master=frame_manipulacao,
         bg='#1C1C1C',
         width=615,
         height=50,
     )
-    frame_navbar.place(x=-1, y=2)
+    frame_navbar.place(x=0, y=0)
     label_titulo = Label(
         master=frame_manipulacao,
         text='Autômato+',
@@ -131,9 +153,24 @@ if __name__ == '__main__':
             command=lambda: dica(btDica, imgs),
         )
     btDica.place(x=568, y=5)
-    # valores = ['Dica']
-    # valores.extend(lista_eventos)
-    # spinbox = Spinbox(master=frame_navbar, values=valores, width=max(len(valor) for valor in lista_eventos) + 2)
-    # spinbox.place(x=450, y=15)
-
+    
+    campoTxt = Text(frame_manipulacao, width=65, height=2)
+    campoTxt.bind("<Return>", conversaStark)
+    campoTxt.place(x=30, y=535)
+    imgs.append(PhotoImage(file=os.path.join(os.path.dirname(__file__), "img", "enviarMsg.png")))
+    btEnviar = Button(
+            frame_manipulacao,
+            image=imgs[2],
+            bg="#9A9999",
+            borderwidth=2,
+            relief="solid",
+            command=conversaStark,
+        )
+    btEnviar.place(x=555, y=534)
+    imgs.append(PhotoImage(file=os.path.join(os.path.dirname(__file__), "img", "alcides.png")))
+    listbox = Listbox(frame_manipulacao, height=7, font=font.Font(size=11), bd=2, 
+                  highlightbackground="black", highlightthickness=4)
+    for item in lista_eventos:
+        listbox.insert(lista_eventos.index(item), item)
+    listbox.bind("<<ListboxSelect>>", listBox)
     janela.screen.mainloop()
