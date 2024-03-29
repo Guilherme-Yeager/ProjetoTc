@@ -8,7 +8,7 @@ class Screen:
 
     def configureWindow(self) -> None:
         self.screen.title("Autômato+")
-        self.screen.iconbitmap(os.path.join(os.path.dirname(__file__), "img", "icone.ico"))
+        self.screen.iconbitmap(dir + "/Interface/img/icone.ico")
         self.screen.resizable(False, False)
         self.screen.configure(bg="#BEB6E0")
         x = self.screen.winfo_screenwidth() // 2 - 400
