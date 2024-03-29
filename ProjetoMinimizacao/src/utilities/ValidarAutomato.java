@@ -90,7 +90,7 @@ public class ValidarAutomato {
                         sigmaDoEstado.add(transicoesInfo.get(i).getRead());
                     }
                 }
-                if(sigmaDoEstado.isEmpty() || !sigma.equals(sigmaDoEstado)){
+                if((!sigma.isEmpty() && sigmaDoEstado.isEmpty()) || !sigma.equals(sigmaDoEstado)){
                     return false;
                 }
                 sigmaDoEstado.clear();

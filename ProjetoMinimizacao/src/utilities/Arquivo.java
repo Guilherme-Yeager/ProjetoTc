@@ -8,7 +8,7 @@ import java.util.List;
 
 
 import javax.swing.JFileChooser;
-
+import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -266,8 +266,9 @@ public class Arquivo {
                 StreamResult streamResult = new StreamResult(new File(arquivo));
                 t.transform(domSource, streamResult);
                 
-                System.out.println("Arquivo salvo com sucesso!");
+                JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso!", "Informação:", JOptionPane.INFORMATION_MESSAGE);
                 System.gc();
+                return;
                 
                 
             } catch (ParserConfigurationException | TransformerException e) {
@@ -278,6 +279,8 @@ public class Arquivo {
                 e.printStackTrace();
             }
         }
+        JOptionPane.showMessageDialog(null, "Arquivo não foi salvo!", "Informação:", JOptionPane.INFORMATION_MESSAGE);
+        System.gc();
     }
     
     private void ajustarTransicoes(List<Transition> transicoesInfo) {
