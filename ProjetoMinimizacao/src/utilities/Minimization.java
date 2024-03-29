@@ -30,24 +30,24 @@ public class Minimization {
             if (novosEstados.get(i).getLabel().isEmpty()) {
                 continue;
             }
-            
+
             String label1 = novosEstados.get(i).getLabel();
-            
+
             for (int j = i + 1; j < novosEstados.size(); j++) {
                 if (novosEstados.get(j).getLabel().isEmpty()) {
                     continue;
                 }
-                
+
                 String label2 = novosEstados.get(j).getLabel();
                 boolean emComum = false;
-                
+
                 for (String l : label2.split(" ")) {
                     if (label1.contains(l)) {
                         emComum = true;
                         break;
                     }
                 }
-                
+
                 if (emComum) {
                     StringBuilder novoLabel = new StringBuilder(label1);
                     for (String l : label2.split(" ")) {
@@ -71,8 +71,8 @@ public class Minimization {
 
         int removidos = 0;
         for (int i = 0; i < novosEstados.size(); i++) {
-            for(Integer index : indexParaRemover){
-                if(i == index - removidos){
+            for (Integer index : indexParaRemover) {
+                if (i == index - removidos) {
                     novosEstados.remove(i);
                     i--;
                     removidos++;
@@ -82,17 +82,17 @@ public class Minimization {
         }
 
         for (int i = 0; i < novosEstados.size(); i++) {
-            for(String label : labels){
-                if(!novosEstados.get(i).getLabel().isEmpty() && label.contains(novosEstados.get(i).getLabel())){
+            for (String label : labels) {
+                if (!novosEstados.get(i).getLabel().isEmpty() && label.contains(novosEstados.get(i).getLabel())) {
                     novosEstados.get(i).setLabel(label);
                     String name = "";
-                    for(String s : label.split(" ")){
+                    for (String s : label.split(" ")) {
                         name += "q" + s;
                     }
                     novosEstados.get(i).setName(name);
                     break;
                 }
-               
+
             }
         }
 
