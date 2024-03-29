@@ -71,10 +71,10 @@ if __name__ == '__main__':
     
     caminhosJar = {
         'União': os.path.join(dir, "ProjetoUniao", "Uniao.jar"),
-        'Intersecção': "",
+        'Intersecção': os.path.join(dir, "ProjetoInterseccao", "InterApp.jar"),
         'Concatenação': os.path.join(dir, "ProjetoConcatenacao", "Concatenacao.jar"),
-        'Complemento': "",
-        'Estrela': "",
+        'Complemento': os.path.join(dir, "ProjetoComplementoEstrela", "ProjetoComplemento" , "Complemento.jar"),
+        'Estrela': os.path.join(dir, "ProjetoComplementoEstrela", "ProjetoEstrela" , "Estrela.jar"),
         'Equivalência': "",
         'Minimização': os.path.join(dir, "ProjetoMinimizacao", "src", "App.jar"),
     }
@@ -88,11 +88,10 @@ if __name__ == '__main__':
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
     buttons = []
     for i, evento in enumerate(lista_eventos):
-        dis = ''
-        if i == 6 or i == 2 or i == 0:
-            dis = 'normal'
-        else:
+        if i == 5:
             dis = 'disable'
+        else:
+            dis = 'normal'
         buttons.append(
             Button(
                 master=canvas,
@@ -169,7 +168,7 @@ if __name__ == '__main__':
     btEnviar.place(x=555, y=534)
     imgs.append(PhotoImage(file=os.path.join(os.path.dirname(__file__), "img", "alcides.png")))
     listbox = Listbox(frame_manipulacao, height=7, font=font.Font(size=11), bd=2, 
-                  highlightbackground="black", highlightthickness=4)
+                  highlightbackground="black", highlightthickness=4, selectbackground="black")
     for item in lista_eventos:
         listbox.insert(lista_eventos.index(item), item)
     listbox.bind("<<ListboxSelect>>", listBox)
