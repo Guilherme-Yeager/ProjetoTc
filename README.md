@@ -1,5 +1,5 @@
 <div align="center">
-  <img src="https://github.com/Guilherme-Yeager/ProjetoTc/assets/105077089/e11224c4-6578-4607-a018-5b36813aaa1a" width="1000" height="190">
+  <img src="https://github.com/Guilherme-Yeager/ProjetoTc/assets/105077089/e11224c4-6578-4607-a018-5b36813aaa1a" width="860" height="180">
 </div>
 
 
