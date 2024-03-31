@@ -1,6 +1,5 @@
 import os
 import subprocess as sb
-from time import sleep
 from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text, Listbox, font
 
 class Screen:
@@ -20,10 +19,11 @@ class Screen:
         self.screen.destroy()
 
     def cleanWindow(self, frame, filtro=None) -> None:
+        global comand
+        comand = True
         for componente in frame.winfo_children():
             if componente in filtro:
                 componente.place_forget()
-        comand = True
 
 def novoProcessoJava(caminhoJar):
     try:
@@ -32,10 +32,12 @@ def novoProcessoJava(caminhoJar):
         print("Verifique a configuração do Java.")
 
 def dica(botao, imgs):
+    global comand
     image = botao.cget("image")
-    if image == str(imgs[0]):
+    if comand and image == str(imgs[0]):
         botao.config(image=imgs[1])
         botao.config(command=lambda: dica(botao, imgs))
+        comand = False
         janela_dica = Tk()
         janela_dica.title("Dicas")
         janela_dica.iconbitmap(dir + "/Interface/img/icone.ico")
@@ -43,20 +45,20 @@ def dica(botao, imgs):
         janela_dica.configure(bg="#1C1C1C")
         x = janela_dica.winfo_screenwidth() // 2 - 100
         y = janela_dica.winfo_screenheight() // 4
-        janela_dica.geometry(f"300x300+{x}+{y}")
+        janela_dica.geometry(f"350x350+{x}+{y}")
         label = Label(
-                    janela_dica, text="\nDicas:",
+                    janela_dica, text="\nAutômato+ realiza operações\n com autômatos.\n\nComandos:\n\n!JFLAP",
                     font=('Arial', 12, 'bold'),
                     fg='white',
                     bg='#1C1C1C',
                 )
         label.pack()
-
+        janela_dica.protocol("WM_DELETE_WINDOW", lambda : (dica(botao, imgs), janela_dica.destroy()))
         janela_dica.mainloop()
-    
-    elif image == str(imgs[1] ):
+    elif image == str(imgs[1]):
         botao.config(image=imgs[0])
         botao.config(command=lambda: dica(botao, imgs))
+        comand = True
 
 def addVingadorMaisForte():
     labelAlcides.place(x=-15, y=332)
@@ -92,12 +94,14 @@ def listBox(event=None):
     print(listbox.get(listbox.curselection()))
 
 def conversaStark(event=None):
+    global comand
     if(comand and (isText().lower() in lista_comandos)):
         addVingadorMaisForte()
         # listbox.place(x=220, y=150)
         addButtonJflap()
         label_jflap.place(x=185, y=350)
         label_nome.place(x=2, y=300)
+        comand = False
     campoTxt.delete("1.0", "end")
     return "break"
     
