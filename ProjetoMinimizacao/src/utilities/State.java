@@ -8,7 +8,7 @@ public class State {
     private Boolean isInitial;
     private Boolean isFinal;
     private String label;
-    
+
     public State(int id, String name, Boolean isInitial, Boolean isFinal, float x, float y, String label) {
         this.id = id;
         this.name = name;
@@ -27,7 +27,7 @@ public class State {
     public void setIdAntigo(int idAntigo) {
         this.idAntigo = idAntigo;
     }
-    
+
     public String getLabel() {
         return label;
     }
@@ -83,5 +83,4 @@ public class State {
     public void setIsFinal(Boolean isFinal) {
         this.isFinal = isFinal;
     }
-
 }

@@ -1,5 +1,6 @@
 import os
 import subprocess as sb
+from time import sleep
 from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text, Listbox, font
 
 class Screen:
@@ -18,9 +19,11 @@ class Screen:
     def closeWindow(self) -> None:
         self.screen.destroy()
 
-    def cleanWindow(self) -> None:
-        for componente in self.screen.winfo_children():
-            componente.destroy()
+    def cleanWindow(self, frame, filtro=None) -> None:
+        for componente in frame.winfo_children():
+            if componente in filtro:
+                componente.place_forget()
+        comand = True
 
 def novoProcessoJava(caminhoJar):
     try:
@@ -33,18 +36,54 @@ def dica(botao, imgs):
     if image == str(imgs[0]):
         botao.config(image=imgs[1])
         botao.config(command=lambda: dica(botao, imgs))
+        janela_dica = Tk()
+        janela_dica.title("Dicas")
+        janela_dica.iconbitmap(dir + "/Interface/img/icone.ico")
+        janela_dica.resizable(False, False)
+        janela_dica.configure(bg="#1C1C1C")
+        x = janela_dica.winfo_screenwidth() // 2 - 100
+        y = janela_dica.winfo_screenheight() // 4
+        janela_dica.geometry(f"300x300+{x}+{y}")
+        label = Label(
+                    janela_dica, text="\nDicas:",
+                    font=('Arial', 12, 'bold'),
+                    fg='white',
+                    bg='#1C1C1C',
+                )
+        label.pack()
+
+        janela_dica.mainloop()
     
-    elif image == str(imgs[1]):
+    elif image == str(imgs[1] ):
         botao.config(image=imgs[0])
         botao.config(command=lambda: dica(botao, imgs))
 
 def addVingadorMaisForte():
-    labelAlcides = Label(
-            frame_manipulacao,
-            image=imgs[3],
-            bg="#838080",
-        )
     labelAlcides.place(x=-15, y=332)
+
+def addButtonJflap():
+    bt_sim = Button(
+                master=frame_manipulacao,
+                background='#D9D9D9', 
+                font=('Arial', 10, 'bold'),
+                text="Sim",
+                borderwidth=4,
+                width=4,
+                height=2,
+                command=lambda caminho=dir + "/ProjetoMinimizacao/tests/JFLAP.jar": (janela.cleanWindow(frame_manipulacao, [bt_sim, bt_nao, label_nome, labelAlcides, label_jflap]), novoProcessoJava(caminho)), 
+            )
+    bt_nao = Button(
+                master=frame_manipulacao,
+                background='#D9D9D9', 
+                font=('Arial', 10, 'bold'),
+                text="Não",
+                borderwidth=4,
+                width=4,
+                height=2,
+                command=lambda : janela.cleanWindow(frame_manipulacao, [bt_sim, bt_nao, label_nome, labelAlcides, label_jflap]),
+            )
+    bt_sim.place(x=240,y=400)
+    bt_nao.place(x=315,y=400)
 
 def isText():
     return campoTxt.get("1.0", "end-1c")
@@ -53,10 +92,13 @@ def listBox(event=None):
     print(listbox.get(listbox.curselection()))
 
 def conversaStark(event=None):
-    if(not isText() == ""):
+    if(comand and (isText().lower() in lista_comandos)):
         addVingadorMaisForte()
-        campoTxt.delete("1.0", "end")
-        listbox.place(x=220, y=150)
+        # listbox.place(x=220, y=150)
+        addButtonJflap()
+        label_jflap.place(x=185, y=350)
+        label_nome.place(x=2, y=300)
+    campoTxt.delete("1.0", "end")
     return "break"
     
     
@@ -71,7 +113,7 @@ if __name__ == '__main__':
     
     caminhosJar = {
         'União': dir + "/ProjetoUniao/Uniao.jar",
-        'Intersecção': dir + "/ProjetoInterseccao/InterApp.jar",
+        'Intersecção': dir + "/ProjetoInterseccao/Interseccao.jar",
         'Concatenação': dir + "/ProjetoConcatenacao/Concatenacao.jar",
         'Complemento': dir + "/ProjetoComplementoEstrela/ProjetoComplemento/Complemento.jar",
         'Estrela': dir + "/ProjetoComplementoEstrela/ProjetoEstrela/Estrela.jar",
@@ -86,6 +128,8 @@ if __name__ == '__main__':
     canvas.place(x=-2, y=0)
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
+    lista_comandos = ['!jflap']
+    comand = True
     buttons = []
     for i, evento in enumerate(lista_eventos):
         if i == 5:
@@ -172,4 +216,30 @@ if __name__ == '__main__':
     for item in lista_eventos:
         listbox.insert(lista_eventos.index(item), item)
     listbox.bind("<<ListboxSelect>>", listBox)
+
+    label_nome= Label(
+        master=frame_manipulacao,
+        text='[A. Stark]',
+        font=('Arial', 10, 'bold'),
+        fg='#B60909',
+        bg='#838080',
+        width=18,
+        height=1,
+    )
+
+    labelAlcides = Label(
+        frame_manipulacao,
+        image=imgs[3],
+        bg="#838080",
+    )
+
+    label_jflap = Label(
+        master=frame_manipulacao,
+        text='- Deseja abrir o JFLAP?',
+        font=('Arial', 14, 'bold'),
+        fg='black',
+        bg='#838080',
+        width=18,
+        height=1,
+    )
     janela.screen.mainloop()

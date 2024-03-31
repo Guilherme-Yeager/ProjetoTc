@@ -4,11 +4,17 @@ import java.util.Scanner;
 import java.io.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.JOptionPane;
 
 public class Automato implements OperacoesAutomatoInterface {
     public List<Estado> estados;
     public List<Transicao> transicoes;
     static boolean flag = false;
+
+    public Automato() {
+        this.estados = new ArrayList<Estado>();
+        this.transicoes = new ArrayList<Transicao>();
+    }
 
     @Override
     public void aplicarInterseccao(Automato automato1, Automato automato2) {
@@ -18,7 +24,6 @@ public class Automato implements OperacoesAutomatoInterface {
     		for(Estado estado2 : automato2.estados) {
     			Estado novoEstado = new Estado();
     			novoEstado.id = Integer.toString(novoAutomato.estados.size());
-    			novoEstado.x = estado1.x;
     			novoEstado.y = estado1.y + 200;
     			novoEstado.name = estado1.name+estado2.name;
     			if(estado1.isFinal && estado2.isFinal) {
@@ -54,6 +59,7 @@ public class Automato implements OperacoesAutomatoInterface {
     	
     	this.estados = novoAutomato.estados;
     	this.transicoes = novoAutomato.transicoes;
+        JOptionPane.showMessageDialog(null,"Operação concluída com sucesso.");
     }
 
     public static void exportarAutomato(Automato automato, String diretorio) throws IOException {
@@ -205,6 +211,7 @@ public class Automato implements OperacoesAutomatoInterface {
     }
 
     public static String obterCaminho() {
+        
         try {
             FileNameExtensionFilter arqFiltro = new FileNameExtensionFilter("Somente arquivos .jff", "jff");
             JFileChooser jFileChooser = new JFileChooser();
@@ -229,5 +236,4 @@ public class Automato implements OperacoesAutomatoInterface {
             return null;
         }
     }
-
 }
