@@ -1,6 +1,7 @@
 import os
+import threading
 import subprocess as sb
-from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text, Listbox, font
+from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text
 
 class Screen:
     def __init__(self) -> None:
@@ -25,9 +26,32 @@ class Screen:
             if componente in filtro:
                 componente.place_forget()
 
+
+def habilitarComponentes():
+    for bt in buttons_operacoes:
+        bt.config(state="normal")
+    janela.cleanWindow(frame_manipulacao, [labelAlcides, label_nome, label_mensagem])
+
+def thExecutar():
+    global processo
+    while processo.poll() is None:
+        ...
+    janela.screen.after(0, habilitarComponentes)
+
 def novoProcessoJava(caminhoJar):
+    global processo
+    if (processo is not None) and processo.poll() is None:
+        return
     try:
-        sb.Popen(['java', '-jar', caminhoJar], creationflags=sb.CREATE_NO_WINDOW)
+        processo = sb.Popen(['java', '-jar', caminhoJar], creationflags=sb.CREATE_NO_WINDOW)
+        if caminhoJar.split("/")[-1] == "JFLAP.jar":
+            return
+        for bt in buttons_operacoes:
+            bt.config(state="disable")
+        addVingadorMaisForte()
+        label_mensagem.place(x=185, y=350)
+        thread = threading.Thread(target=thExecutar)
+        thread.start()
     except sb.CalledProcessError:
         print("Verifique a configuração do Java.")
 
@@ -62,6 +86,7 @@ def dica(botao, imgs):
 
 def addVingadorMaisForte():
     labelAlcides.place(x=-15, y=332)
+    label_nome.place(x=2, y=300)
 
 def addButtonJflap():
     bt_sim = Button(
@@ -90,17 +115,14 @@ def addButtonJflap():
 def isText():
     return campoTxt.get("1.0", "end-1c")
 
-def listBox(event=None):
-    print(listbox.get(listbox.curselection()))
 
 def conversaStark(event=None):
     global comand
     if(comand and (isText().lower() in lista_comandos)):
         addVingadorMaisForte()
-        # listbox.place(x=220, y=150)
-        addButtonJflap()
-        label_jflap.place(x=185, y=350)
-        label_nome.place(x=2, y=300)
+        if isText().lower() == "!jflap":
+            addButtonJflap()
+            label_jflap.place(x=185, y=350)
         comand = False
     campoTxt.delete("1.0", "end")
     return "break"
@@ -113,8 +135,8 @@ if __name__ == '__main__':
         print('Certifique-se que o java está instalado!')
         exit()
     
+    processo = None
     dir = os.path.dirname(os.path.dirname(__file__))
-    
     caminhosJar = {
         'União': dir + "/ProjetoUniao/Uniao.jar",
         'Intersecção': dir + "/ProjetoInterseccao/Interseccao.jar",
@@ -129,18 +151,14 @@ if __name__ == '__main__':
     janela.configureWindow()
 
     canvas = Canvas(janela.screen, bg='#1C1C1C', width=800, height=600)
-    canvas.place(x=-2, y=0)
+    canvas.place(x=-2, y=-2)
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
     lista_comandos = ['!jflap']
     comand = True
-    buttons = []
+    buttons_operacoes = []
     for i, evento in enumerate(lista_eventos):
-        if i == 5:
-            dis = 'disable'
-        else:
-            dis = 'normal'
-        buttons.append(
+        buttons_operacoes.append(
             Button(
                 master=canvas,
                 background='#D9D9D9', 
@@ -149,11 +167,11 @@ if __name__ == '__main__':
                 width=12,
                 borderwidth=4,
                 height=3,
-                state=dis,
+                state="normal",
                 command=lambda caminho=caminhosJar[evento]: novoProcessoJava(caminho),
             )
         )
-        buttons[i].place(x=28, y=50 + (i * 77))
+        buttons_operacoes[i].place(x=28, y=50 + (i * 77))
 
     label_opercoes = Label(
         master=canvas,
@@ -215,11 +233,6 @@ if __name__ == '__main__':
         )
     btEnviar.place(x=555, y=534)
     imgs.append(PhotoImage(file=os.path.join(os.path.dirname(__file__), "img", "alcides.png")))
-    listbox = Listbox(frame_manipulacao, height=7, font=font.Font(size=11), bd=2, 
-                  highlightbackground="black", highlightthickness=4, selectbackground="black")
-    for item in lista_eventos:
-        listbox.insert(lista_eventos.index(item), item)
-    listbox.bind("<<ListboxSelect>>", listBox)
 
     label_nome= Label(
         master=frame_manipulacao,
@@ -246,4 +259,13 @@ if __name__ == '__main__':
         width=18,
         height=1,
     )
+    label_mensagem = Label(
+                    master=frame_manipulacao,
+                    text='- Aguarde a operação \nser concluída.',
+                    font=('Arial', 14, 'bold'),
+                    fg='black',
+                    bg='#838080',
+                    width=18,
+                    height=2,
+                )
     janela.screen.mainloop()
