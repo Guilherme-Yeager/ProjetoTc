@@ -6,7 +6,7 @@ from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text
 class Screen:
     def __init__(self) -> None:
         self.screen = Tk()
-
+        
     def configureWindow(self) -> None:
         self.screen.title("Autômato+")
         self.screen.iconbitmap(dir + "/Interface/img/icone.ico")
@@ -15,9 +15,12 @@ class Screen:
         x = self.screen.winfo_screenwidth() // 2 - 400
         y = self.screen.winfo_screenheight() // 11
         self.screen.geometry(f"800x600+{x}+{y}")
+        self.screen.protocol("WM_DELETE_WINDOW", self.closeWindow)
 
     def closeWindow(self) -> None:
+        global th_aux
         self.screen.destroy()
+        th_aux = False
 
     def cleanWindow(self, frame, filtro=None) -> None:
         global comand
@@ -36,12 +39,11 @@ def thExecutar():
     global processo
     while processo.poll() is None:
         ...
-    janela.screen.after(0, habilitarComponentes)
+    if th_aux:
+        janela.screen.after(0, habilitarComponentes)
 
 def novoProcessoJava(caminhoJar):
-    global processo
-    if (processo is not None) and processo.poll() is None:
-        return
+    global processo, thread
     try:
         processo = sb.Popen(['java', '-jar', caminhoJar], creationflags=sb.CREATE_NO_WINDOW)
         if caminhoJar.split("/")[-1] == "JFLAP.jar":
@@ -136,6 +138,9 @@ if __name__ == '__main__':
         exit()
     
     processo = None
+    thread = None
+    th_aux = True
+
     dir = os.path.dirname(os.path.dirname(__file__))
     caminhosJar = {
         'União': dir + "/ProjetoUniao/Uniao.jar",
@@ -269,3 +274,5 @@ if __name__ == '__main__':
                     height=2,
                 )
     janela.screen.mainloop()
+    if thread is not None:
+        thread.join()
