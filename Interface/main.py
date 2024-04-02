@@ -1,12 +1,12 @@
 import os
 import threading
 import subprocess as sb
-from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text
+from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text, messagebox
 
 class Screen:
     def __init__(self) -> None:
         self.screen = Tk()
-        self.janelasFilhas = []
+        self.janelaDica = None
         
     def configureWindow(self) -> None:
         self.screen.title("Autômato+")
@@ -20,10 +20,11 @@ class Screen:
 
     def closeWindow(self) -> None:
         global th_aux
-        for janela in self.janelasFilhas:
-            janela.destroy()
+        if self.janelaDica is not None:
+            self.janelaDica.destroy()
         self.screen.destroy()
         th_aux = False
+        
 
     def cleanWindow(self, frame, filtro=None) -> None:
         global comand
@@ -34,21 +35,27 @@ class Screen:
 
 
 def habilitarComponentes():
+    global text
     for bt in buttons_operacoes:
         bt.config(state="normal")
     janela.cleanWindow(frame_manipulacao, [labelAlcides, label_nome, label_mensagem])
+    text = True
 
 def thExecutar():
-    global processo
+    global processo, text
+    text = False
     while processo.poll() is None:
         ...
     if th_aux:
         janela.screen.after(0, habilitarComponentes)
 
-def novoProcessoJava(caminhoJar):
+def novoProcessoJava(caminhoJar, caminhoAutomato=None):
     global processo, thread
     try:
-        processo = sb.Popen(['java', '-jar', caminhoJar], creationflags=sb.CREATE_NO_WINDOW)
+        listaCmd = ['java', '-jar', caminhoJar]
+        if caminhoAutomato is not None:
+            listaCmd.extend([caminhoAutomato])
+        processo = sb.Popen(listaCmd, creationflags=sb.CREATE_NO_WINDOW)
         if caminhoJar.split("/")[-1] == "JFLAP.jar":
             return
         for bt in buttons_operacoes:
@@ -61,18 +68,17 @@ def novoProcessoJava(caminhoJar):
         print("Verifique a configuração do Java.")
 
 def alter(botao, imgs):
-    global janela_dica
-    janela_dica.destroy()
-    janela_dica = None
+    janela.janelaDica.destroy()
+    janela.janelaDica = None
     botao.config(image=imgs[0])
 
 def dica(botao, imgs):
-    global comand, janela_dica  
-    if janela_dica == None:
+    global comand
+    if janela.janelaDica == None:
         botao.config(image=imgs[1])
         comand = False
         janela_dica = Tk()
-        janela.janelasFilhas.append(janela_dica)
+        janela.janelaDica = janela_dica
         janela_dica.title("Dicas")
         janela_dica.iconbitmap(dir + "/Interface/img/icone.ico")
         janela_dica.resizable(False, False)
@@ -81,7 +87,7 @@ def dica(botao, imgs):
         y = janela_dica.winfo_screenheight() // 4
         janela_dica.geometry(f"350x350+{x}+{y}")
         label = Label(
-                    janela_dica, text="\nAutômato+ realiza operações\n com autômatos.\n\nComandos:\n\n!JFLAP",
+                    janela_dica, text="\nAutômato+ realiza operações\n com autômatos.\n\nComandos:\n\n!JFLAP\n\n!JFLAP OPERAÇÃO",
                     font=('Arial', 12, 'bold'),
                     fg='white',
                     bg='#1C1C1C',
@@ -89,8 +95,6 @@ def dica(botao, imgs):
         label.pack()
         janela_dica.protocol("WM_DELETE_WINDOW", lambda : alter(botao, imgs))
         janela_dica.mainloop()
-        
-        
 
 def addVingadorMaisForte():
     labelAlcides.place(x=-15, y=332)
@@ -125,13 +129,40 @@ def isText():
 
 
 def conversaStark(event=None):
-    global comand
-    if(comand and (isText().lower() in lista_comandos)):
-        addVingadorMaisForte()
+    global text
+    if(text and (isText().lower() in lista_comandos)):
         if isText().lower() == "!jflap":
+            addVingadorMaisForte()
             addButtonJflap()
             label_jflap.place(x=185, y=350)
-        comand = False
+        else:
+            if isText().lower() == "!jflap união":
+                if os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniao.jff"):
+                    novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar", caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniao.jff")
+                else:
+                    messagebox.showinfo("Informação:", "Este autômato não existe na pasta do projeto.")
+            elif isText().lower() == "!jflap intersecção":
+                if os.path.exists(caminhosJar["Intersecção"][:caminhosJar['Intersecção'].rfind("/")] + "/automato-interseccao.jff"):
+                    novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar", caminhosJar["Intersecção"][:caminhosJar['Intersecção'].rfind("/")] + "/automato-interseccao.jff")
+                else:
+                    messagebox.showinfo("Informação:", "Este autômato não existe na pasta do projeto.")
+            elif isText().lower() == "!jflap concatenação":
+                if os.path.exists(caminhosJar["Concatenação"][:caminhosJar['Concatenação'].rfind("/")] + "/automato-concatenacao.jff"):
+                    novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar", caminhosJar["Concatenação"][:caminhosJar['Concatenação'].rfind("/")] + "/automato-concatenacao.jff")
+                else:
+                    messagebox.showinfo("Informação:", "Este autômato não existe na pasta do projeto.")
+            elif isText().lower() == "!jflap complemento":
+                if os.path.exists(caminhosJar["Complemento"][:caminhosJar['Complemento'].rfind("/")] + "/automato-complemento.jff"):
+                    novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar", caminhosJar["Complemento"][:caminhosJar['Complemento'].rfind("/")] + "/automato-complemento.jff")
+                else:
+                    messagebox.showinfo("Informação:", "Este autômato não existe na pasta do projeto.")
+            elif isText().lower() == "!jflap estrela":
+                if os.path.exists(caminhosJar["Estrela"][:caminhosJar['Estrela'].rfind("/")] + "/automato-estrela.jff"):
+                    novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar", caminhosJar["Estrela"][:caminhosJar['Estrela'].rfind("/")] + "/automato-estrela.jff")
+                else:
+                    messagebox.showinfo("Informação:", "Este autômato não existe na pasta do projeto.")
+            elif isText().lower() == "!jflap minimização":
+                    messagebox.showinfo("Informação:", "Utilize o comando !JFLAP e selecione o autômato.")
     campoTxt.delete("1.0", "end")
     return "break"
     
@@ -146,6 +177,7 @@ if __name__ == '__main__':
     processo = None
     thread = None
     th_aux = True
+    text = True
 
     dir = os.path.dirname(os.path.dirname(__file__))
     caminhosJar = {
@@ -157,7 +189,6 @@ if __name__ == '__main__':
         'Equivalência': "",
         'Minimização': dir + "/ProjetoMinimizacao/src/App.jar",
     }
-    
     janela = Screen()
     janela.configureWindow()
 
@@ -165,9 +196,9 @@ if __name__ == '__main__':
     canvas.place(x=-2, y=-2)
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
-    lista_comandos = ['!jflap']
+    lista_comandos = ['!jflap'] + ['!jflap ' + evento.lower() for evento in lista_eventos]
+    
     comand = True
-    janela_dica = None
     buttons_operacoes = []
     for i, evento in enumerate(lista_eventos):
         buttons_operacoes.append(
