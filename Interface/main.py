@@ -161,8 +161,6 @@ def conversaStark(event=None):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar", caminhosJar["Estrela"][:caminhosJar['Estrela'].rfind("/")] + "/automato-estrela.jff")
                 else:
                     messagebox.showinfo("Informação:", "Este autômato não existe na pasta do projeto.")
-            elif isText().lower() == "!jflap minimização":
-                    messagebox.showinfo("Informação:", "Utilize o comando !JFLAP e selecione o autômato.")
     campoTxt.delete("1.0", "end")
     return "break"
     
@@ -186,7 +184,7 @@ if __name__ == '__main__':
         'Concatenação': dir + "/ProjetoConcatenacao/Concatenacao.jar",
         'Complemento': dir + "/ProjetoComplementoEstrela/ProjetoComplemento/Complemento.jar",
         'Estrela': dir + "/ProjetoComplementoEstrela/ProjetoEstrela/Estrela.jar",
-        'Equivalência': "",
+        'Equivalência': dir + "/ProjetoEquivalencia/src/App.jar",
         'Minimização': dir + "/ProjetoMinimizacao/src/App.jar",
     }
     janela = Screen()
@@ -196,7 +194,7 @@ if __name__ == '__main__':
     canvas.place(x=-2, y=-2)
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
-    lista_comandos = ['!jflap'] + ['!jflap ' + evento.lower() for evento in lista_eventos]
+    lista_comandos = ['!jflap'] + ['!jflap ' + evento.lower() for evento in lista_eventos[:5]]
     
     comand = True
     buttons_operacoes = []
