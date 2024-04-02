@@ -81,7 +81,8 @@ public class Equivalencia {
     }
 
     public Map<String, Set<String>> pegarPossiveisNovoEstado(int index) {
-        Map<String, Set<String>> possiveisNovosEstados = new HashMap<>();
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        Map<String, Set<String>> possiveisNovosEstados = new HashMap();
         Set<String> auxLabel = auxAutomatoSaida.get(index).getEstado().getLabel();
         if (auxLabel != null && auxLabel.size() > 0) {
             for (String id : auxLabel) {
@@ -127,14 +128,13 @@ public class Equivalencia {
         Estado primeiroEstado = automatoLido.getEstadoInicial().copyWith();
         if (primeiroEstado == null || !primeiroEstado.isInitial())
             Error.errorMessageAndExit("O automato não tem estado inicial. Não foi possível fazer a equivalência");
-        primeiroEstado.setId(String.valueOf(auxAutomatoSaida.size())); // Sempre vai ser 0, pois não tem nenhum lá dentro
+        primeiroEstado.setId(String.valueOf(auxAutomatoSaida.size())); // Sempre vai ser 0, pois n tem nenhum la dentro
                                                                        // ainda
         primeiroEstado.setName("q" + String.valueOf(auxAutomatoSaida.size()));
         EstadoComTransicoes auxAutomatoInicial = new EstadoComTransicoes(primeiroEstado);
 
         auxAutomatoInicial.getEstado().setLabel(
-                addLabelsRecursivoComLetra(new HashSet<>(Set.of("0")), auxAutomatoInicial.getEstado(), LAMBDA));
-
+                addLabelsRecursivoComLetra(new HashSet<>(Set.of(automatoLido.getEstadoInicial().getId())), automatoLido.getEstadoInicial(), LAMBDA));
         Set<String> label = auxAutomatoInicial.getLabelDoEstado();
         for (Estado e : automatoLido.getEstados()) {
             if (label.contains(e.getId()) && e.isFinal()) {
