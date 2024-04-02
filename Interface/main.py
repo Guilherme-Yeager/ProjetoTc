@@ -6,6 +6,7 @@ from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text
 class Screen:
     def __init__(self) -> None:
         self.screen = Tk()
+        self.janelasFilhas = []
         
     def configureWindow(self) -> None:
         self.screen.title("Autômato+")
@@ -19,6 +20,8 @@ class Screen:
 
     def closeWindow(self) -> None:
         global th_aux
+        for janela in self.janelasFilhas:
+            janela.destroy()
         self.screen.destroy()
         th_aux = False
 
@@ -57,14 +60,19 @@ def novoProcessoJava(caminhoJar):
     except sb.CalledProcessError:
         print("Verifique a configuração do Java.")
 
+def alter(botao, imgs):
+    global janela_dica
+    janela_dica.destroy()
+    janela_dica = None
+    botao.config(image=imgs[0])
+
 def dica(botao, imgs):
-    global comand
-    image = botao.cget("image")
-    if comand and image == str(imgs[0]):
+    global comand, janela_dica  
+    if janela_dica == None:
         botao.config(image=imgs[1])
-        botao.config(command=lambda: dica(botao, imgs))
         comand = False
         janela_dica = Tk()
+        janela.janelasFilhas.append(janela_dica)
         janela_dica.title("Dicas")
         janela_dica.iconbitmap(dir + "/Interface/img/icone.ico")
         janela_dica.resizable(False, False)
@@ -79,12 +87,10 @@ def dica(botao, imgs):
                     bg='#1C1C1C',
                 )
         label.pack()
-        janela_dica.protocol("WM_DELETE_WINDOW", lambda : (dica(botao, imgs), janela_dica.destroy()))
+        janela_dica.protocol("WM_DELETE_WINDOW", lambda : alter(botao, imgs))
         janela_dica.mainloop()
-    elif image == str(imgs[1]):
-        botao.config(image=imgs[0])
-        botao.config(command=lambda: dica(botao, imgs))
-        comand = True
+        
+        
 
 def addVingadorMaisForte():
     labelAlcides.place(x=-15, y=332)
@@ -161,6 +167,7 @@ if __name__ == '__main__':
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
     lista_comandos = ['!jflap']
     comand = True
+    janela_dica = None
     buttons_operacoes = []
     for i, evento in enumerate(lista_eventos):
         buttons_operacoes.append(
