@@ -57,7 +57,7 @@ def novoProcessoJava(caminhoJar, caminhoAutomato=None):
         listaCmd = ['java', '-jar', caminhoJar]
         if caminhoAutomato is not None:
             listaCmd.extend([caminhoAutomato])
-        processo = sb.Popen(['java', '-jar', caminhoJar], creationflags=sb.CREATE_NO_WINDOW)
+        processo = sb.Popen(listaCmd, creationflags=sb.CREATE_NO_WINDOW)
         if caminhoJar.split("/")[-1] == "JFLAP.jar":
             return
         for bt in buttons_operacoes:
