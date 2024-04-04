@@ -1,4 +1,5 @@
 import os
+import shutil
 import threading
 import subprocess as sb
 from tkinter import Tk, Button, Label, Canvas, PhotoImage, Frame, Text, messagebox
@@ -40,7 +41,7 @@ def habilitarComponentes():
         bt.config(state="normal")
     janela.cleanWindow(frame_manipulacao, [labelAlcides, label_nome, label_mensagem])
     text = True
-
+        
 def thExecutar():
     global processo, text
     text = False
@@ -51,11 +52,12 @@ def thExecutar():
 
 def novoProcessoJava(caminhoJar, caminhoAutomato=None):
     global processo, thread
+    os.chdir(os.path.dirname(caminhoJar))
     try:
         listaCmd = ['java', '-jar', caminhoJar]
         if caminhoAutomato is not None:
             listaCmd.extend([caminhoAutomato])
-        processo = sb.Popen(listaCmd, creationflags=sb.CREATE_NO_WINDOW)
+        processo = sb.Popen(['java', '-jar', caminhoJar], creationflags=sb.CREATE_NO_WINDOW)
         if caminhoJar.split("/")[-1] == "JFLAP.jar":
             return
         for bt in buttons_operacoes:
@@ -195,7 +197,6 @@ if __name__ == '__main__':
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação', 'Complemento', 'Estrela', 'Equivalência', 'Minimização']
     lista_comandos = ['!jflap'] + ['!jflap ' + evento.lower() for evento in lista_eventos[:5]]
-    
     comand = True
     buttons_operacoes = []
     for i, evento in enumerate(lista_eventos):
