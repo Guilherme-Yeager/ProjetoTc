@@ -7,7 +7,7 @@ public class Estado {
     public boolean isFinal;
 
     public Estado() {
-    }
+    } 
 
     public Estado(String id, String name, float x, float y, boolean isInitial, boolean isFinal) {
         this.id = id;

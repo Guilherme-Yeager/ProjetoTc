@@ -5,7 +5,6 @@ import java.io.*;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
-
 public class Automato implements OperacoesAutomatoInterface {
     public List<Estado> estados;
     public List<Transicao> transicoes;
@@ -17,17 +16,18 @@ public class Automato implements OperacoesAutomatoInterface {
     }
 
     @Override
-    public void aplicarUniao(Automato automato1, Automato automato2) {
+    public void aplicarUniaoAFN(Automato automato1, Automato automato2) {
         int spaceX = 300, spaceY = 200;
         Automato novoAutomato = new Automato();
-    
+
         // Adiciona todos os estados do automato1 ao novo automato
         for (Estado estado : automato1.estados) {
             novoAutomato.estados.add(estado);
             estado.x = estado.x + spaceX;
         }
-    
-        // Adiciona todos os estados do automato2 ao novo automato, ajustando seus IDs e posições
+
+        // Adiciona todos os estados do automato2 ao novo automato, ajustando seus IDs e
+        // posições
         for (Estado estado : automato2.estados) {
             estado.id = Integer.toString((Integer.parseInt(estado.id)) + automato1.estados.size());
             estado.name = "q" + estado.id;
@@ -35,19 +35,20 @@ public class Automato implements OperacoesAutomatoInterface {
             estado.y = estado.y + spaceY + 100;
             novoAutomato.estados.add(estado);
         }
-    
+
         // Adiciona todas as transicoes do automato1 ao novo automato
         for (Transicao transicao : automato1.transicoes) {
             novoAutomato.transicoes.add(transicao);
         }
-    
-        // Adiciona todas as transicoes do automato2 ao novo automato, ajustando as referencias de estados
+
+        // Adiciona todas as transicoes do automato2 ao novo automato, ajustando as
+        // referencias de estados
         for (Transicao transicao : automato2.transicoes) {
             transicao.from = transicao.from + automato1.estados.size();
             transicao.to = transicao.to + automato1.estados.size();
             novoAutomato.transicoes.add(transicao);
         }
-    
+
         // Adiciona um novo estado inicial ao novo automato
         Estado novoEstadoInicial = new Estado();
         novoEstadoInicial.id = Integer.toString(novoAutomato.estados.size());
@@ -59,8 +60,9 @@ public class Automato implements OperacoesAutomatoInterface {
 
         // Adiciona um novo estado final ao novo automato
         Estado novoEstadoFinal = new Estado();
-    
-        // Adiciona transicoes lambda do novo estado inicial para os estados iniciais dos automatos originais
+
+        // Adiciona transicoes lambda do novo estado inicial para os estados iniciais
+        // dos automatos originais
         for (Estado estado : automato1.estados) {
             if (estado.isInitial) {
                 Transicao transicao = new Transicao();
@@ -68,46 +70,12 @@ public class Automato implements OperacoesAutomatoInterface {
                 transicao.to = Integer.parseInt(estado.id);
                 transicao.read = "";
                 novoAutomato.transicoes.add(transicao);
-                // Verifica se o estado do automato1 além de inicial também é final, fazendo todos os 
-                //estados finais de ambos os autômatos se ligarem a um novo estado final
-                if(estado.isFinal){
-                    if(novoEstadoFinal.id == null){
-                        novoEstadoFinal.id = Integer.toString(novoAutomato.estados.size());
-                        novoEstadoFinal.name = "q" + novoEstadoFinal.id;
-                        novoEstadoFinal.x = 220 + spaceX;
-                        novoEstadoFinal.y = 80 + spaceY;
-                        novoEstadoFinal.isFinal = true;
-                        novoAutomato.estados.add(novoEstadoFinal);
-                    }
-                    Transicao transicao2 = new Transicao();
-                    transicao2.from = Integer.parseInt(estado.id);
-                    transicao2.to = Integer.parseInt(novoEstadoFinal.id);
-                    transicao2.read = "";
-                    novoAutomato.transicoes.add(transicao2);
-                    for(Estado estado2 : automato1.estados){
-                        if(estado2.isFinal){
-                            Transicao transicao3 = new Transicao();
-                            transicao3.from = Integer.parseInt(estado2.id);
-                            transicao3.to = Integer.parseInt(novoEstadoFinal.id);
-                            transicao3.read = "";
-                            novoAutomato.transicoes.add(transicao3);
-                        }
-                    }
-                    for(Estado estado2 : automato2.estados){
-                        if(estado2.isFinal){
-                            Transicao transicao3 = new Transicao();
-                            transicao3.from = Integer.parseInt(estado2.id);
-                            transicao3.to = Integer.parseInt(novoEstadoFinal.id);
-                            transicao3.read = "";
-                            novoAutomato.transicoes.add(transicao3);
-                        }
-                    }
-                }
                 estado.isInitial = false;
             }
         }
-    
-        // Adiciona transicoes lambda do novo estado inicial para os estados iniciais dos automatos originais
+
+        // Adiciona transicoes lambda do novo estado inicial para os estados iniciais
+        // dos automatos originais
         for (Estado estado : automato2.estados) {
             if (estado.isInitial) {
                 Transicao transicao = new Transicao();
@@ -115,47 +83,101 @@ public class Automato implements OperacoesAutomatoInterface {
                 transicao.to = Integer.parseInt(estado.id);
                 transicao.read = "";
                 novoAutomato.transicoes.add(transicao);
-                // Verifica se o estado do automato2 além de inicial também é final, fazendo todos os 
-                //estados finais de ambos os autômatos se ligarem a um novo estado final
-                if(estado.isFinal){
-                    //Verifica se o ID do novo estado final foi criado anteriormente
-                    if(novoEstadoFinal.id==null){
-                        novoEstadoFinal.id = Integer.toString(novoAutomato.estados.size());
-                        novoEstadoFinal.name = "q" + novoEstadoFinal.id;
-                        novoEstadoFinal.x = 220 + spaceX;
-                        novoEstadoFinal.y = 80 + spaceY;
-                        novoEstadoFinal.isFinal = true;
-                        novoAutomato.estados.add(novoEstadoFinal);
-                    }
-                    Transicao transicao2 = new Transicao();
-                    transicao2.from = Integer.parseInt(estado.id);
-                    transicao2.to = Integer.parseInt(novoEstadoFinal.id);
-                    transicao2.read = "";
-                    novoAutomato.transicoes.add(transicao2);
-                    for(Estado estado2 : automato2.estados){
-                        if(estado2.isFinal){
-                            Transicao transicao3 = new Transicao();
-                            transicao3.from = Integer.parseInt(estado2.id);
-                            transicao3.to = Integer.parseInt(novoEstadoFinal.id);
-                            transicao3.read = "";
-                            novoAutomato.transicoes.add(transicao3);
-                        }
-                    }
-                    for(Estado estado2 : automato1.estados){
-                        if(estado2.isFinal){
-                            Transicao transicao3 = new Transicao();
-                            transicao3.from = Integer.parseInt(estado2.id);
-                            transicao3.to = Integer.parseInt(novoEstadoFinal.id);
-                            transicao3.read = "";
-                            novoAutomato.transicoes.add(transicao3);
-                        }
-                    }
-                }
                 estado.isInitial = false;
             }
         }
         this.estados = novoAutomato.estados;
         this.transicoes = novoAutomato.transicoes;
+    }
+
+    @Override
+    public void aplicarUniaoAFD(Automato automato1, Automato automato2) {
+        int spaceX = 200, spaceY = 200, novaPosicao = 0;
+        Automato novoAutomato = new Automato();
+        for (Estado estado1 : automato1.estados) {
+            for (Estado estado2 : automato2.estados) {
+                Estado novoEstado = new Estado();
+                novoEstado.id = Integer.toString(novoAutomato.estados.size());
+                novoEstado.name = "q" + estado1.id + ",q" + estado2.id;
+                novoEstado.x = 30 + spaceX;
+                if (novaPosicao % 2 == 0)
+                    novoEstado.y = 60 + spaceY;
+                if (novaPosicao % 2 != 0)
+                    novoEstado.y = spaceY;
+                if (estado1.isInitial == true && estado2.isInitial == true)
+                    novoEstado.isInitial = true;
+                if (estado1.isFinal == true || estado2.isFinal == true)
+                    novoEstado.isFinal = true;
+                novoAutomato.estados.add(novoEstado);
+                spaceX += 110;
+                novaPosicao++;
+            }
+        }
+
+        for (Estado estado : novoAutomato.estados) {
+
+            String nomes[] = estado.name.split(",");
+            int transicao1 = Integer.parseInt(nomes[0].replaceAll("q", ""));
+            int transicao2 = Integer.parseInt(nomes[1].replaceAll("q", ""));
+
+            List<Transicao> t1 = automato1.transicoes.stream().filter(x -> x.from == transicao1).toList();
+            List<Transicao> t2 = automato2.transicoes.stream().filter(x -> x.from == transicao2).toList();
+
+            for (Transicao at1 : t1) {
+                for (Transicao at2 : t2) {
+                    int destino1 = at1.to;
+                    int destino2 = at2.to;
+                    String destino = "q" + destino1 + ",q" + destino2;
+                    Estado _state = novoAutomato.estados.stream().filter(state -> state.name.equals(destino))
+                            .findFirst().get();
+
+                    Transicao transicao = new Transicao();
+                    transicao.to = Integer.parseInt(_state.id);
+                    transicao.read = at1.read;
+                    transicao.from = Integer.parseInt(estado.id);
+                    novoAutomato.transicoes.add(transicao);
+                }
+            }
+
+        }
+
+        // Atualizar os estados e transições do novo autômato
+        this.estados = novoAutomato.estados;
+        this.transicoes = novoAutomato.transicoes;
+    }
+
+    public String separarNome1(String nome) {
+        if (nome != null) {
+            char[] caracteres = nome.toCharArray();
+            StringBuilder builder = new StringBuilder();
+            for (char c : caracteres) {
+                if (c == ',')
+                    break;
+                builder.append(c);
+            }
+            String result = builder.toString();
+            return result;
+        }
+        return null;
+    }
+
+    public String separarNome2(String nome) {
+        if (nome != null) {
+            char[] caracteres = nome.toCharArray();
+            StringBuilder builder = new StringBuilder();
+            char startChar = ',';
+            boolean start = false;
+            for (char c : caracteres) {
+                if (start) {
+                    builder.append(c);
+                } else if (c == startChar) {
+                    start = true;
+                }
+            }
+            String result = builder.toString();
+            return result;
+        }
+        return null;
     }
 
     public static void exportarAutomato(Automato automato, String diretorio) throws IOException {
@@ -307,19 +329,19 @@ public class Automato implements OperacoesAutomatoInterface {
     }
 
     public static String obterCaminho() {
-        
+
         try {
             FileNameExtensionFilter arqFiltro = new FileNameExtensionFilter("Somente arquivos .jff", "jff");
             JFileChooser jFileChooser = new JFileChooser();
             jFileChooser.setAcceptAllFileFilterUsed(false);
             jFileChooser.addChoosableFileFilter(arqFiltro);
-            if(!flag){
+            if (!flag) {
                 jFileChooser.setDialogTitle("Selecione o primeiro arquivo .jff");
                 flag = true;
-            }else{
+            } else {
                 jFileChooser.setDialogTitle("Selecione o segundo arquivo .jff");
             }
-            
+
             if (jFileChooser.showOpenDialog(null) == JFileChooser.APPROVE_OPTION) {
                 File arquivo = jFileChooser.getSelectedFile();
                 String caminho = arquivo.getAbsolutePath();

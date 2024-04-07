@@ -147,10 +147,17 @@ def conversaStark(event=None):
             addButtonJflap()
             label_jflap.place(x=185, y=350)
         else:
-            if isText().lower() == "!jflap união":
-                if os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniao.jff"):
+            if isText().lower() == "!jflap união afd":
+                if os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff") or os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff"):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
-                                     caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniao.jff")
+                                     caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff")
+                else:
+                    messagebox.showinfo(
+                        "Informação:", "Este autômato não existe na pasta do projeto.")
+            if isText().lower() == "!jflap união afn":
+                if os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff") or os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFN.jff"):
+                    novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
+                                     caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFN.jff")
                 else:
                     messagebox.showinfo(
                         "Informação:", "Este autômato não existe na pasta do projeto.")
@@ -200,7 +207,7 @@ if __name__ == '__main__':
 
     dir = os.path.dirname(os.path.dirname(__file__))
     caminhosJar = {
-        'União': dir + "/ProjetoUniao/Uniao.jar",
+        'União': dir + "/ProjetoUniao/App.jar",
         'Intersecção': dir + "/ProjetoInterseccao/Interseccao.jar",
         'Concatenação': dir + "/ProjetoConcatenacao/Concatenacao.jar",
         'Complemento': dir + "/ProjetoComplementoEstrela/ProjetoComplemento/Complemento.jar",
@@ -216,8 +223,8 @@ if __name__ == '__main__':
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação',
                      'Complemento', 'Estrela', 'Equivalência', 'Minimização']
-    lista_comandos = ['!jflap'] + ['!jflap ' + evento.lower()
-                                   for evento in lista_eventos[:5]]
+    lista_comandos = ['!jflap'] + ['!jflap união afd'] + ['!jflap união afn'] + ['!jflap ' + evento.lower()
+                                                                                 for evento in lista_eventos[1:5]]
     comand = True
     buttons_operacoes = []
     for i, evento in enumerate(lista_eventos):

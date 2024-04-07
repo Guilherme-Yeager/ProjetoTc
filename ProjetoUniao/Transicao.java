@@ -4,7 +4,7 @@ public class Transicao {
     public String read;
 
     public Transicao() {
-    }
+    } 
 
     public Transicao(int from, int to, String read) {
         this.from = from;
