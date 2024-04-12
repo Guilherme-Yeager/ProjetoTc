@@ -13,7 +13,6 @@ public class ValidarAutomato {
     private Set<String> sigma;
     private Arquivo arquivo;
 
-    
     public ValidarAutomato(Arquivo arquivo) {
         this.arquivo = arquivo;
     }
@@ -38,7 +37,18 @@ public class ValidarAutomato {
         try {
             List<Transition> transicoesInfo = this.getArquivo().listaTransicoes(doc);
             List<State> estados = this.getArquivo().listaEstados(doc);
-            if(estados.isEmpty()){
+            boolean temInicial = false;
+            for (State s : estados) {
+                if (s.getIsInitial()) {
+                    temInicial = true;
+                }
+            }
+            if (!temInicial) {
+                JOptionPane.showMessageDialog(null, "Autômato não possui estado inicial", "Informação:",
+                        JOptionPane.INFORMATION_MESSAGE);
+                System.exit(0);
+            }
+            if (estados.isEmpty()) {
                 return false;
             }
             for (int i = 0; i < transicoesInfo.size(); i++) {
@@ -63,34 +73,19 @@ public class ValidarAutomato {
         return false;
     }
 
-    public boolean isComplete(Document doc) {
-        JOptionPane.showMessageDialog(null, "No próximo passo informe os símbolos do alfabeto.",
-                "Informe o Sigma:", JOptionPane.INFORMATION_MESSAGE);
-        Set<String> sigma = new HashSet<>();
-        String simbolo;
-        do {
-            simbolo = JOptionPane.showInputDialog(null, "Informe um símbolo do alfabeto:", "Informe o Sigma:",
-                    JOptionPane.PLAIN_MESSAGE);
-            if (simbolo != null && !simbolo.isEmpty()) {
-                sigma.add(simbolo);
-            } else {
-                if (simbolo == null) {
-                    break;
-                }
-            }
-        } while (true);
-        this.setSigma(sigma);
+    public boolean isComplete() {
+        Set<String> sigma = this.getSigma();
         try {
-            List<Transition> transicoesInfo = this.getArquivo().listaTransicoes(doc);
+            List<Transition> transicoesInfo = this.getArquivo().getListaTransicoes();
             List<State> estados = this.getArquivo().getListaEstados();
             Set<String> sigmaDoEstado = new HashSet<>();
             for (State state : estados) {
                 for (int i = 0; i < transicoesInfo.size(); i++) {
-                    if(state.getId() == transicoesInfo.get(i).getFrom()){
+                    if (state.getId() == transicoesInfo.get(i).getFrom()) {
                         sigmaDoEstado.add(transicoesInfo.get(i).getRead());
                     }
                 }
-                if((!sigma.isEmpty() && sigmaDoEstado.isEmpty()) || !sigma.equals(sigmaDoEstado)){
+                if ((!sigma.isEmpty() && sigmaDoEstado.isEmpty()) || !sigma.equals(sigmaDoEstado)) {
                     return false;
                 }
                 sigmaDoEstado.clear();
@@ -102,9 +97,28 @@ public class ValidarAutomato {
         return false;
     }
 
-    public boolean accessibleStates(Document doc) {
-        List<State> estados = this.getArquivo().listaEstados(doc);
-        List<Transition> transicoes = this.getArquivo().listaTransicoes(doc);
+    public boolean isComplete(Document doc) {
+        Set<String> sigma = new HashSet<>();
+        try {
+            List<Transition> transicoesInfo = this.getArquivo().listaTransicoes(doc);
+            List<State> estados = this.getArquivo().getListaEstados();
+            for (State state : estados) {
+                for (int i = 0; i < transicoesInfo.size(); i++) {
+                    if (state.getId() == transicoesInfo.get(i).getFrom()) {
+                        sigma.add(transicoesInfo.get(i).getRead());
+                    }
+                }
+            }
+            this.setSigma(sigma);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public boolean accessibleStates() {
+        List<State> estados = this.getArquivo().getListaEstados();
+        List<Transition> transicoes = this.getArquivo().getListaTransicoes();
         State estadoInicial = null;
         for (State estado : estados) {
             if (estado.getIsInitial()) {
@@ -121,7 +135,44 @@ public class ValidarAutomato {
         return conjEstadosAlcancados.equals(conjEstados);
     }
 
-    public  void verificarEstadosAlcancados(List<State> estados, List<State> estadosAlcancados, State estadoAtual,
+    public boolean accessibleStates(Document doc) {
+        List<State> estados = this.getArquivo().getListaEstados();
+        List<Transition> transicoes = this.getArquivo().getListaTransicoes();
+        State estadoInicial = null;
+        for (State estado : estados) {
+            if (estado.getIsInitial()) {
+                estadoInicial = estado;
+            }
+        }
+        if (estadoInicial == null) {
+            return false;
+        }
+
+        List<State> estadosAlcancados = new ArrayList<>();
+        verificarEstadosAlcancados(estados, estadosAlcancados, estadoInicial, transicoes);
+        for (int i = 0; i < this.getArquivo().getListaEstados().size(); i++) {
+            if (!estadosAlcancados.contains(this.getArquivo().getListaEstados().get(i))) {
+                this.getArquivo().getListaEstados().remove(i);
+                i--;
+            }
+
+        }
+        List<Integer> ids = new ArrayList<>();
+        for (State estado : estadosAlcancados) {
+            ids.add(estado.getId());
+        }
+        for (int i = 0; i < transicoes.size(); i++) {
+            if (!ids.contains(transicoes.get(i).getFrom()) || !ids.contains(transicoes.get(i).getTo())) {
+                transicoes.remove(i);
+                i--;
+            }
+        }
+        this.getArquivo().ajustarEstados(this.getArquivo().getListaEstados());
+        this.getArquivo().ajustarTransicoes(this.getArquivo().getListaTransicoes());
+        return true;
+    }
+
+    public void verificarEstadosAlcancados(List<State> estados, List<State> estadosAlcancados, State estadoAtual,
             List<Transition> transicoes) {
         estadosAlcancados.add(estadoAtual);
         for (Transition transicao : transicoes) {
@@ -132,6 +183,33 @@ public class ValidarAutomato {
                 }
             }
         }
+    }
+
+    public void tornarTotal() {
+        if (this.getSigma().isEmpty()) {
+            return;
+        }
+        State estado = new State(this.getArquivo().getListaEstados().size(),
+                "q" + Integer.toString(this.getArquivo().getListaEstados().size()), false, false, 400, 200, "");
+        this.getArquivo().getListaEstados().add(estado);
+        List<Transition> transicoesInfo = new ArrayList<>();
+        Set<String> sigmaDoEstado = new HashSet<>();
+        for (int i = 0; i < this.getArquivo().getListaEstados().size(); i++) {
+            for (Transition transicao : this.getArquivo().getListaTransicoes()) {
+                if (transicao.getFrom() == i) {
+                    sigmaDoEstado.add(transicao.getRead());
+                }
+            }
+            if (!sigmaDoEstado.equals(this.getSigma())) {
+                Set<String> diferenca = new HashSet<>(sigma);
+                diferenca.removeAll(sigmaDoEstado);
+                for (String simbolo : diferenca) {
+                    transicoesInfo.add(new Transition(i, estado.getId(), simbolo));
+                }
+            }
+            sigmaDoEstado.clear();
+        }
+        this.getArquivo().getListaTransicoes().addAll(transicoesInfo);
     }
 
 }

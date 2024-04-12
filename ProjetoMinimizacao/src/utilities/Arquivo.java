@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -29,17 +28,17 @@ import org.w3c.dom.Element;
 
 public class Arquivo {
     private List<Transition> listaTransicoes;
-    private List<State> listaEstadoss;
+    private List<State> listaEstados;
     private Document doc;
 
     public List<State> getListaEstados() {
-        return listaEstadoss;
+        return listaEstados;
     }
-    
-    public void setListaEstadoss(List<State> listaEstadoss) {
-        this.listaEstadoss = listaEstadoss;
+
+    public void setListaEstadoss(List<State> listaEstados) {
+        this.listaEstados = listaEstados;
     }
-    
+
     public List<Transition> getListaTransicoes() {
         return listaTransicoes;
     }
@@ -47,15 +46,15 @@ public class Arquivo {
     public void setListaTransicoes(List<Transition> listaTransicoes) {
         this.listaTransicoes = listaTransicoes;
     }
-    
+
     public Document getDoc() {
         return doc;
     }
-    
+
     public void setDoc(Document doc) {
         this.doc = doc;
     }
-    
+
     /**
      * Método para o usuário selecionar um arquivo .jff
      * 
@@ -138,7 +137,6 @@ public class Arquivo {
         return transicoesInfo;
     }
 
-    
     /**
      * Método para o processar o documento para obter
      * a lista de estados do autômato
@@ -176,7 +174,7 @@ public class Arquivo {
                         isInitial = true;
                     } else if (noFilho.getNodeName() == "final") {
                         isFinal = true;
-                    } 
+                    }
                 }
             }
             State state = new State(id, name, isInitial, isFinal, x, y, "");
@@ -190,28 +188,28 @@ public class Arquivo {
         this.setListaEstadoss(listaEstadosInfo);
         return listaEstadosInfo;
     }
-    
+
     public void gravarAutomato(List<State> novosEstados, List<Transition> novasTransicoes) {
         JFileChooser jFileChooser = new JFileChooser();
         jFileChooser.setDialogTitle("Salve o arquivo .jff");
         if (jFileChooser.showSaveDialog(null) == JFileChooser.APPROVE_OPTION) {
             File automatoMinimizado = jFileChooser.getSelectedFile();
             automatoMinimizado = new File(automatoMinimizado.getAbsoluteFile() + ".jff");
-            
+
             try {
                 String arquivo = automatoMinimizado.getAbsolutePath();
-                
+
                 DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
                 DocumentBuilder dc = dbf.newDocumentBuilder();
                 Document d = dc.newDocument();
-                
+
                 Element raiz = d.createElement("structure");
                 d.appendChild(raiz);
-                
+
                 Element type = d.createElement("type");
                 type.appendChild(d.createTextNode("fa"));
                 raiz.appendChild(type);
-                
+
                 Element automato = d.createElement("automaton");
                 raiz.appendChild(automato);
                 for (State estado : novosEstados) {
@@ -256,21 +254,21 @@ public class Arquivo {
                     transition.appendChild(read);
                     automato.appendChild(transition);
                 }
-                
+
                 TransformerFactory tf = TransformerFactory.newInstance();
                 Transformer t = tf.newTransformer();
                 t.setOutputProperty(OutputKeys.INDENT, "yes");
                 t.setOutputProperty("{http://xml.apache.org/xslt}indent-amount", "2");
-                
+
                 DOMSource domSource = new DOMSource(d);
                 StreamResult streamResult = new StreamResult(new File(arquivo));
                 t.transform(domSource, streamResult);
-                
-                JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso!", "Informação:", JOptionPane.INFORMATION_MESSAGE);
+
+                JOptionPane.showMessageDialog(null, "Arquivo salvo com sucesso!", "Informação:",
+                        JOptionPane.INFORMATION_MESSAGE);
                 System.gc();
                 return;
-                
-                
+
             } catch (ParserConfigurationException | TransformerException e) {
                 System.err.println("Erro durante a configuração ou transformação do documento XML: " + e.getMessage());
                 e.printStackTrace();
@@ -282,34 +280,34 @@ public class Arquivo {
         JOptionPane.showMessageDialog(null, "Arquivo não foi salvo!", "Informação:", JOptionPane.INFORMATION_MESSAGE);
         System.gc();
     }
-    
-    private void ajustarTransicoes(List<Transition> transicoesInfo) {
+
+    public void ajustarTransicoes(List<Transition> transicoesInfo) {
 
         for (State estado : this.getListaEstados()) {
-            if(estado.getIdAntigo() == null){
+            if (estado.getIdAntigo() == null) {
                 continue;
             }
             for (Transition transicao : transicoesInfo) {
-                if(transicao.getFrom() == estado.getIdAntigo()){
+                if (transicao.getFrom() == estado.getIdAntigo()) {
                     transicao.setFrom(estado.getId());
                 }
-                if(transicao.getTo() == estado.getIdAntigo()){
+                if (transicao.getTo() == estado.getIdAntigo()) {
                     transicao.setTo(estado.getId());
                 }
-            }  
+            }
         }
-        
+
     }
 
-    public void ajustarEstados(List<State> listaEstadosInfo){
+    public void ajustarEstados(List<State> listaEstadosInfo) {
         int tam = listaEstadosInfo.size();
         for (int i = 0; i < tam; i++) {
-            if(listaEstadosInfo.get(i).getId() != i){
+            if (listaEstadosInfo.get(i).getId() != i) {
                 listaEstadosInfo.get(i).setIdAntigo(listaEstadosInfo.get(i).getId());
                 listaEstadosInfo.get(i).setId(i);
                 listaEstadosInfo.get(i).setName("q" + i);
             }
-            
+
         }
     }
 }

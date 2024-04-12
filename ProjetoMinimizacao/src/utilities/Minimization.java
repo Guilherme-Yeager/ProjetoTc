@@ -10,29 +10,110 @@ import java.util.Set;
 
 public class Minimization {
 
-    public void minimizarAutomato(Arquivo arquivo, ValidarAutomato validarAutomato) {
+    public void minimizarAutomato(Arquivo arquivo, ValidarAutomato validarAutomato, boolean modificou) {
         List<State> estados = arquivo.getListaEstados();
+        List<Transition> transicoes = arquivo.getListaTransicoes();
         HashMap<String, CombinedState> paresEstados = this.geraTabela(estados);
         this.marcarTrivialmenteNaoEquivalente(paresEstados, estados);
         this.marcarNaoEquivalente(paresEstados, estados, arquivo, validarAutomato);
         List<State> novosEstados = this.unificarEstados(paresEstados, estados);
         this.otimizarEstados(novosEstados);
-        List<Transition> transicoes = arquivo.getListaTransicoes();
         List<Transition> novasTransicoes = this.unificarTransicoes(novosEstados, transicoes, estados);
+        if (modificou) {
+            this.excluirEstadosInuteis(arquivo, novosEstados, novasTransicoes,
+                    validarAutomato, estados, transicoes);
+        }
         arquivo.gravarAutomato(novosEstados, novasTransicoes);
 
     }
 
-    private void otimizarEstados(List<State> novosEstados) {
+    public void verificarEstadosAlcancados(List<State> estados, List<State> estadosAlcancados, State estadoAtual,
+            List<Transition> transicoes) {
+        estadosAlcancados.add(estadoAtual);
+        for (Transition transicao : transicoes) {
+            if (transicao.getFrom() == estadoAtual.getId()) {
+                if (estadoAtual.getIsFinal()) {
+                    return;
+                }
+                State proximoEstado = null;
+                for (State s : estados) {
+                    if (s.getId() == transicao.getTo()) {
+                        proximoEstado = s;
+                    }
+                }
+                if (!estadosAlcancados.contains(proximoEstado)) {
+                    this.verificarEstadosAlcancados(estados, estadosAlcancados, proximoEstado, transicoes);
+                }
+            }
+        }
+    }
+
+    public void excluirEstadosInuteis(Arquivo arquivo, List<State> novosEstados, List<Transition> novasTransicoes,
+            ValidarAutomato validarAutomato, List<State> estadosAntigos, List<Transition> transicoes) {
+
+        Set<Integer> ids = new HashSet<>();
+        for (State estado : novosEstados) {
+            ids.add(estado.getId());
+        }
+
+        for (int i = 0; i < novasTransicoes.size(); i++) {
+            if (!ids.contains(novasTransicoes.get(i).getFrom()) || !ids.contains(novasTransicoes.get(i).getTo())) {
+                novasTransicoes.remove(i);
+                i--;
+            }
+        }
+        List<State> estadosAlcancados = new ArrayList<>();
+        boolean inutil = false;
+        List<State> estadosParaRemover = new ArrayList<>();
+        for (int i = 0; i < novosEstados.size(); i++) {
+            this.verificarEstadosAlcancados(novosEstados, estadosAlcancados, novosEstados.get(i),
+                    novasTransicoes);
+            for (State state : estadosAlcancados) {
+                if (state.getIsFinal()) {
+                    inutil = true;
+                    break;
+                }
+            }
+            if (inutil == false) {
+                estadosParaRemover.add(novosEstados.get(i));
+            }
+            estadosAlcancados.clear();
+            inutil = false;
+        }
+        novosEstados.removeAll(estadosParaRemover); // Aq
+        ids.clear();
+        for (State estado : novosEstados) {
+            ids.add(estado.getId());
+        }
+
+        for (int i = 0; i < novasTransicoes.size(); i++) {
+            if (!ids.contains(novasTransicoes.get(i).getFrom()) || !ids.contains(novasTransicoes.get(i).getTo())) {
+                novasTransicoes.remove(i);
+                i--;
+            }
+        }
+        this.otimizarEstados(novosEstados);
+        this.unificarTransicoes(novosEstados, transicoes, estadosAntigos);
+        List<Transition> transicoesParaRemover = new ArrayList<>();
+        for (int i = 0; i < novasTransicoes.size(); i++) {
+            for (State estado : estadosParaRemover) {
+                if (transicoes.get(i).getFrom() == estado.getId() || transicoes.get(i).getTo() == estado.getId()) {
+                    transicoesParaRemover.add(transicoes.get(i));
+                }
+            }
+        }
+        this.unificarTransicoes(novosEstados, transicoes, estadosAntigos);
+        novasTransicoes.removeAll(transicoesParaRemover);
+    }
+
+    public void otimizarEstados(List<State> novosEstados) {
         Set<Integer> indexParaRemover = new HashSet<>();
         List<String> labels = new ArrayList<>();
         for (int i = 0; i < novosEstados.size() - 1; i++) {
             if (novosEstados.get(i).getLabel().isEmpty()) {
                 continue;
             }
-
             String label1 = novosEstados.get(i).getLabel();
-
             for (int j = i + 1; j < novosEstados.size(); j++) {
                 if (novosEstados.get(j).getLabel().isEmpty()) {
                     continue;
@@ -256,7 +337,6 @@ public class Minimization {
         for (State estado : estados) {
             if (!novosIds.contains(estado.getId())) {
                 idsRemovidos.add(estado.getId());
-
             }
         }
         List<Transition> novasTransicoes = new ArrayList<>();

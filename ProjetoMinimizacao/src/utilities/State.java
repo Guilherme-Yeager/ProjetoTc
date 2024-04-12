@@ -7,8 +7,10 @@ public class State {
     private float x, y;
     private Boolean isInitial;
     private Boolean isFinal;
+    private Boolean isAccessible;
+    
     private String label;
-
+    
     public State(int id, String name, Boolean isInitial, Boolean isFinal, float x, float y, String label) {
         this.id = id;
         this.name = name;
@@ -18,8 +20,17 @@ public class State {
         this.y = y;
         this.label = label;
         this.idAntigo = null;
+        this.isAccessible = true;
+    }
+    
+    public Boolean getIsAccessible() {
+        return isAccessible;
     }
 
+    public void setIsAccessible(Boolean isAccessible) {
+        this.isAccessible = isAccessible;
+    }
+    
     public Integer getIdAntigo() {
         return idAntigo;
     }
