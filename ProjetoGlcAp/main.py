@@ -1,3 +1,4 @@
+import os
 from tkinter import Button, Tk, Entry, ttk, Frame, Canvas, PhotoImage, Label, messagebox, BOTTOM, RIGHT, LEFT, BOTH, X, Y
 
 
@@ -124,8 +125,8 @@ def addConfigScroll():
 
 
 janela = Tk()
-imgs.append(PhotoImage(file='img/seta.png'))
-imgs.append(PhotoImage(file='img/excluir.png'))
+imgs.append(PhotoImage(file=os.path.dirname(__file__) + '/img/seta.png'))
+imgs.append(PhotoImage(file=os.path.dirname(__file__) + '/img/excluir.png'))
 configureWindow(janela)
 addConfigScroll()
 janela.mainloop()
