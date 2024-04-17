@@ -1,5 +1,5 @@
 import os
-import gerarAp
+from gerarAp import salvarAutomato
 from tkinter import Button, Tk, Entry, ttk, Frame, Canvas, PhotoImage, Label, messagebox, BOTTOM, RIGHT, LEFT, BOTH, X, Y
 
 
@@ -26,8 +26,12 @@ text = []
 
 def otimizarRegras(dicRegras: dict):
     chaves = list(dicRegras.keys())
+    while '' in chaves:
+        chaves.remove('')
+        del dicRegras['']
     for chave in chaves:
-        if len(chave) > 1 or not ('A' <= chave <= 'Z'):
+        if not ('A' <= chave[0] <= 'Z'):
+            print(chave)
             messagebox.showinfo(title='Informação:',
                                 message='Formato da regra inválida.')
             return False
@@ -36,9 +40,6 @@ def otimizarRegras(dicRegras: dict):
             if dicRegras[(chave + str(i))] == dicRegras[chave]:
                 del dicRegras[(chave + str(i))]
             i += 1
-    while '' in chaves:
-        chaves.remove('')
-        del dicRegras['']
     return True
 
 
@@ -46,6 +47,9 @@ def gerarAp():
     dicRegras = {}
     for regra in text:
         chave = regra[0].get()
+        if (len(chave) > 1):
+            messagebox.showinfo(title='Informação:',
+                                message='Formato da regra inválida.')
         if chave in dicRegras:
             i = 1
             chave = chave[0] + str(i)
@@ -54,7 +58,7 @@ def gerarAp():
                 chave = chave[0] + str(i)
         dicRegras[chave] = regra[1].get()
     if (otimizarRegras(dicRegras)):
-        print(dicRegras)
+        salvarAutomato(dicRegras)
 
 
 def excluirRegra(index, btExcluir, srcFrame):
