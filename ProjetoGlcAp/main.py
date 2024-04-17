@@ -1,4 +1,5 @@
 import os
+import gerarAp
 from tkinter import Button, Tk, Entry, ttk, Frame, Canvas, PhotoImage, Label, messagebox, BOTTOM, RIGHT, LEFT, BOTH, X, Y
 
 
@@ -18,22 +19,27 @@ def configureWindow(janela):
 
 imgs = []
 canvas = None
+scr = None
 yText = 0
 text = []
 
 
 def otimizarRegras(dicRegras: dict):
     chaves = list(dicRegras.keys())
-    while '' in chaves:
-        chaves.remove('')
-        del dicRegras['']
-
     for chave in chaves:
+        if len(chave) > 1 or not ('A' <= chave <= 'Z'):
+            messagebox.showinfo(title='Informação:',
+                                message='Formato da regra inválida.')
+            return False
         i = 1
         while (chave + str(i)) in dicRegras:
             if dicRegras[(chave + str(i))] == dicRegras[chave]:
                 del dicRegras[(chave + str(i))]
             i += 1
+    while '' in chaves:
+        chaves.remove('')
+        del dicRegras['']
+    return True
 
 
 def gerarAp():
@@ -47,7 +53,8 @@ def gerarAp():
                 i += 1
                 chave = chave[0] + str(i)
         dicRegras[chave] = regra[1].get()
-    otimizarRegras(dicRegras)
+    if (otimizarRegras(dicRegras)):
+        print(dicRegras)
 
 
 def excluirRegra(index, btExcluir, srcFrame):
@@ -74,6 +81,11 @@ def excluirRegra(index, btExcluir, srcFrame):
     yText -= 1
 
 
+def controleScroll(command, *args):
+    if len(text) > 11:
+        command(*args)
+
+
 def adicionarRegra(scrFrame):
     global yText, canvas
     if text:
@@ -94,13 +106,20 @@ def adicionarRegra(scrFrame):
     btExcluir.grid(row=yText, column=3, padx=(10, 10))
     canvas.update_idletasks()
     canvas.config(scrollregion=canvas.bbox("all"))
-    canvas.bind("<MouseWheel>", lambda event: canvas.yview_scroll(
-        int(-1*(event.delta/120)), "units"))
+    canvas.bind("<MouseWheel>", lambda event: controleScroll(
+        canvas.yview_scroll, int(-1 * (event.delta / 120)), "units"))
+    if len(text) <= 2:
+        canvas.configure(yscrollcommand=None)
+        scr.configure(command=lambda: None)
+    else:
+        canvas.configure(yscrollcommand=scr.set)
+        scr.configure(
+            command=lambda *args: controleScroll(canvas.yview, *args))
     canvas.yview_moveto(1.0)
 
 
 def addConfigScroll():
-    global canvas
+    global canvas, scr
     frame = Frame(janela, bg='#BDBDBD')
     frame.pack(fill=BOTH, expand=True)
     canvas = Canvas(frame, bg='#BDBDBD', highlightthickness=0)
@@ -120,7 +139,6 @@ def addConfigScroll():
         btGerar = Button(btFrame, text="Gerar", font=(
             'Arial', 10, 'bold'), fg='black', bg='#BDBDBD', command=gerarAp)
         btGerar.pack(side=RIGHT, padx=30, pady=5)
-
     addFooter()
 
 

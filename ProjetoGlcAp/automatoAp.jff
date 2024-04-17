@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<structure>
+  <type>pda</type>
+  <automaton>
+    <state id="1" name="qInício">
+      <x>50.0</x>
+      <y>125.0</y>
+      <initial/>
+    </state>
+    <state id="2" name="qLaço">
+      <x>300.0</x>
+      <y>125.0</y>
+    </state>
+    <state id="3" name="qAceita">
+      <x>50.0</x>
+      <y>400.0</y>
+      <final/>
+    </state>
+  </automaton>
+</structure>
