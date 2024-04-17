@@ -31,7 +31,6 @@ def otimizarRegras(dicRegras: dict):
         del dicRegras['']
     for chave in chaves:
         if not ('A' <= chave[0] <= 'Z'):
-            print(chave)
             messagebox.showinfo(title='Informação:',
                                 message='Formato da regra inválida.')
             return False
@@ -58,7 +57,7 @@ def gerarAp():
                 chave = chave[0] + str(i)
         dicRegras[chave] = regra[1].get()
     if (otimizarRegras(dicRegras)):
-        salvarAutomato(dicRegras)
+        salvarAutomato(dicRegras, list(dicRegras.keys())[0])
 
 
 def excluirRegra(index, btExcluir, srcFrame):
