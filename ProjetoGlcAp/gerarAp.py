@@ -4,13 +4,16 @@ from lxml import etree
 
 def addTerminal(terminais, terminal):
     if isinstance(terminal, str):
-        if terminal != '' and terminal.islower():
+        if terminal == '' or 'A' <= terminal <= 'Z':
+            return
+        elif 'a' <= terminal <= 'z':
             terminais.add(terminal)
         else:
             terminais.add(terminal)
 
 
 def salvarAutomato(dic: dict, s):
+    print(dic)
     root = etree.Element("structure")
     etree.SubElement(root, "type").text = "pda"
     automaton = etree.SubElement(root, "automaton")
@@ -107,6 +110,7 @@ def salvarAutomato(dic: dict, s):
                     etree.SubElement(transition, "pop")
                     etree.SubElement(transition, "push").text = derivacao
                     ids += 1
+    print(terminais)
     for terminal in terminais:
         transition = etree.SubElement(automaton, "transition")
         etree.SubElement(transition, "from").text = '1'
