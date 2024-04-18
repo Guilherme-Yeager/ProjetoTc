@@ -147,44 +147,51 @@ def conversaStark(event=None):
             label_jflap.place(x=185, y=350)
         else:
             if isText().lower() == "!jflap união afd":
-                if os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff") or os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff"):
+                if os.path.exists(caminhos["União"][:caminhos['União'].rfind("/")] + "/automato-uniaoAFD.jff") or os.path.exists(caminhos["União"][:caminhos['União'].rfind("/")] + "/automato-uniaoAFD.jff"):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
-                                     caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff")
+                                     caminhos["União"][:caminhos['União'].rfind("/")] + "/automato-uniaoAFD.jff")
                 else:
                     messagebox.showinfo(
                         "Informação:", "Este autômato não existe na pasta do projeto.")
             if isText().lower() == "!jflap união afn":
-                if os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFD.jff") or os.path.exists(caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFN.jff"):
+                if os.path.exists(caminhos["União"][:caminhos['União'].rfind("/")] + "/automato-uniaoAFD.jff") or os.path.exists(caminhos["União"][:caminhos['União'].rfind("/")] + "/automato-uniaoAFN.jff"):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
-                                     caminhosJar["União"][:caminhosJar['União'].rfind("/")] + "/automato-uniaoAFN.jff")
+                                     caminhos["União"][:caminhos['União'].rfind("/")] + "/automato-uniaoAFN.jff")
                 else:
                     messagebox.showinfo(
                         "Informação:", "Este autômato não existe na pasta do projeto.")
             elif isText().lower() == "!jflap intersecção":
-                if os.path.exists(caminhosJar["Intersecção"][:caminhosJar['Intersecção'].rfind("/")] + "/automato-interseccao.jff"):
+                if os.path.exists(caminhos["Intersecção"][:caminhos['Intersecção'].rfind("/")] + "/automato-interseccao.jff"):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
-                                     caminhosJar["Intersecção"][:caminhosJar['Intersecção'].rfind("/")] + "/automato-interseccao.jff")
+                                     caminhos["Intersecção"][:caminhos['Intersecção'].rfind("/")] + "/automato-interseccao.jff")
                 else:
                     messagebox.showinfo(
                         "Informação:", "Este autômato não existe na pasta do projeto.")
             elif isText().lower() == "!jflap concatenação":
-                if os.path.exists(caminhosJar["Concatenação"][:caminhosJar['Concatenação'].rfind("/")] + "/automato-concatenacao.jff"):
+                if os.path.exists(caminhos["Concatenação"][:caminhos['Concatenação'].rfind("/")] + "/automato-concatenacao.jff"):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
-                                     caminhosJar["Concatenação"][:caminhosJar['Concatenação'].rfind("/")] + "/automato-concatenacao.jff")
+                                     caminhos["Concatenação"][:caminhos['Concatenação'].rfind("/")] + "/automato-concatenacao.jff")
                 else:
                     messagebox.showinfo(
                         "Informação:", "Este autômato não existe na pasta do projeto.")
             elif isText().lower() == "!jflap complemento":
-                if os.path.exists(caminhosJar["Complemento"][:caminhosJar['Complemento'].rfind("/")] + "/automato-complemento.jff"):
+                if os.path.exists(caminhos["Complemento"][:caminhos['Complemento'].rfind("/")] + "/automato-complemento.jff"):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
-                                     caminhosJar["Complemento"][:caminhosJar['Complemento'].rfind("/")] + "/automato-complemento.jff")
+                                     caminhos["Complemento"][:caminhos['Complemento'].rfind("/")] + "/automato-complemento.jff")
                 else:
                     messagebox.showinfo(
                         "Informação:", "Este autômato não existe na pasta do projeto.")
             elif isText().lower() == "!jflap estrela":
-                if os.path.exists(caminhosJar["Estrela"][:caminhosJar['Estrela'].rfind("/")] + "/automato-estrela.jff"):
+                if os.path.exists(caminhos["Estrela"][:caminhos['Estrela'].rfind("/")] + "/automato-estrela.jff"):
                     novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
-                                     caminhosJar["Estrela"][:caminhosJar['Estrela'].rfind("/")] + "/automato-estrela.jff")
+                                     caminhos["Estrela"][:caminhos['Estrela'].rfind("/")] + "/automato-estrela.jff")
+                else:
+                    messagebox.showinfo(
+                        "Informação:", "Este autômato não existe na pasta do projeto.")
+            elif isText().lower() == "!jflap glc-ap":
+                if os.path.exists(caminhos["GlcAp"][:caminhos['GlcAp'].rfind("/")] + "/automatoAp.jff") or os.path.exists(caminhos["GlcAp"][:caminhos['GlcAp'].rfind("/")] + "/automatoAp.jff"):
+                    novoProcessoJava(dir + "/ProjetoMinimizacao/tests/JFLAP.jar",
+                                     caminhos["GlcAp"][:caminhos['GlcAp'].rfind("/")] + "/automatoAp.jff")
                 else:
                     messagebox.showinfo(
                         "Informação:", "Este autômato não existe na pasta do projeto.")
@@ -217,14 +224,14 @@ def voltarMain(buttons_operacoes):
                 borderwidth=4,
                 height=3,
                 state="normal",
-                command=lambda caminho=caminhosJar[evento]: novoProcessoJava(
+                command=lambda caminho=caminhos[evento]: novoProcessoJava(
                     caminho),
             )
         )
         buttons_operacoes[i].place(x=28, y=60 + (i * 83))
 
 
-def novasFunicionalidades(funcionaliades, buttons_operacoes, caminhosJar, btVoltar):
+def novasFunicionalidades(funcionaliades, buttons_operacoes, caminhos, btVoltar):
     for coomponente in canvas.winfo_children():
         if isinstance(coomponente, Button):
             coomponente.place_forget()
@@ -240,7 +247,7 @@ def novasFunicionalidades(funcionaliades, buttons_operacoes, caminhosJar, btVolt
                 borderwidth=4,
                 height=3,
                 state="normal",
-                command=lambda caminho=caminhosJar[evento]: novoProcessoJava(
+                command=lambda caminho=caminhos[evento]: novoProcessoJava(
                     caminho),
             )
         )
@@ -248,7 +255,7 @@ def novasFunicionalidades(funcionaliades, buttons_operacoes, caminhosJar, btVolt
                           1].place(x=28, y=60 + (i * 83))
         if func == 'GLC-AP':
             buttons_operacoes[len(buttons_operacoes) -
-                              1].configure(command=lambda caminho=os.path.dirname(os.path.dirname(__file__)) + '/ProjetoGlcAp/dist/ConversorGlcAp/ConversorGlcAp.exe': novoProcessoPython(
+                              1].configure(command=lambda caminho=caminhos['GlcAp']: novoProcessoPython(
                                   caminho))
 
 
@@ -265,7 +272,7 @@ if __name__ == '__main__':
     text = True
 
     dir = os.path.dirname(os.path.dirname(__file__))
-    caminhosJar = {
+    caminhos = {
         'União': dir + "/ProjetoUniao/App.jar",
         'Intersecção': dir + "/ProjetoInterseccao/Interseccao.jar",
         'Concatenação': dir + "/ProjetoConcatenacao/Concatenacao.jar",
@@ -273,17 +280,17 @@ if __name__ == '__main__':
         'Estrela': dir + "/ProjetoComplementoEstrela/ProjetoEstrela/Estrela.jar",
         'Equivalência': dir + "/ProjetoEquivalencia/src/App.jar",
         'Minimização': dir + "/ProjetoMinimizacao/src/App.jar",
+        'GlcAp': dir + "/ProjetoGlcAp/dist/ConversorGlcAp/ConversorGlcAp.exe",
     }
     janela = Screen()
     janela.configureWindow()
-
     canvas = Canvas(janela.screen, bg='#1C1C1C', width=800, height=600)
     canvas.place(x=-2, y=-2)
 
     lista_eventos = ['União', 'Intersecção', 'Concatenação',
                      'Complemento', 'Estrela', 'Equivalência', 'Minimização']
     lista_comandos = ['!jflap'] + ['!jflap união afd'] + ['!jflap união afn'] + ['!jflap ' + evento.lower()
-                                                                                 for evento in lista_eventos[1:5]]
+                                                                                 for evento in lista_eventos[1:5]] + ['!jflap glc-ap']
     comand = True
     buttons_operacoes = []
     for i, evento in enumerate(lista_eventos[0:6]):
@@ -297,7 +304,7 @@ if __name__ == '__main__':
                 borderwidth=4,
                 height=3,
                 state="normal",
-                command=lambda caminho=caminhosJar[evento]: novoProcessoJava(
+                command=lambda caminho=caminhos[evento]: novoProcessoJava(
                     caminho),
             )
         )
@@ -360,7 +367,7 @@ if __name__ == '__main__':
         borderwidth=2,
         relief="solid",
         command=lambda: novasFunicionalidades(
-            (lista_eventos[-1], 'GLC-AP'), buttons_operacoes, caminhosJar, btVoltar),
+            (lista_eventos[-1], 'GLC-AP'), buttons_operacoes, caminhos, btVoltar),
     )
     btProximo.place(x=2, y=564)
 

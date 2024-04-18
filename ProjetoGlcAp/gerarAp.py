@@ -118,7 +118,6 @@ def salvarAutomato(dic: dict, s):
         continue
     arvore = etree.tostring(root, pretty_print=True,
                             encoding='unicode', xml_declaration=False)
-    os.chdir(os.path.dirname(__file__))
-    with open("automatoAp.jff", "w", encoding="utf-8") as arq:
+    with open(os.path.dirname(os.path.dirname(__file__)) + "/automatoAp.jff", "w", encoding="utf-8") as arq:
         arq.write('<?xml version="1.0" encoding="UTF-8" standalone="no"?>\n')
         arq.write(arvore)
