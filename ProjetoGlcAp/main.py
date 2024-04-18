@@ -9,6 +9,7 @@ def closeWindow(janela):
 
 def configureWindow(janela):
     janela.title("Informe as regras:")
+    janela.iconbitmap(os.path.dirname(__file__) + "/img/icone.ico")
     janela.resizable(False, False)
     janela.configure(bg="#BDBDBD")
     x = janela.winfo_screenwidth() // 2 - 150
@@ -17,6 +18,7 @@ def configureWindow(janela):
     janela.protocol("WM_DELETE_WINDOW", lambda: closeWindow(janela))
 
 
+janela = None
 imgs = []
 canvas = None
 scr = None
@@ -39,6 +41,10 @@ def otimizarRegras(dicRegras: dict):
             if dicRegras[(chave + str(i))] == dicRegras[chave]:
                 del dicRegras[(chave + str(i))]
             i += 1
+    if len(dicRegras) == 0:
+        messagebox.showinfo(title='Informação:',
+                            message='Nenhuma regra inforamda.')
+        return False
     return True
 
 
@@ -58,6 +64,8 @@ def gerarAp():
         dicRegras[chave] = regra[1].get()
     if (otimizarRegras(dicRegras)):
         salvarAutomato(dicRegras, list(dicRegras.keys())[0])
+        messagebox.showinfo(title='Informação:',
+                            message='Autômato com pilha gerado.')
 
 
 def excluirRegra(index, btExcluir, srcFrame):

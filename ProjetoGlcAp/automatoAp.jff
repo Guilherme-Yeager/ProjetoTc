@@ -24,16 +24,12 @@
       <x>200</x>
       <y>220</y>
     </state>
-    <state id="5" name="q5">
-      <x>250</x>
-      <y>225</y>
-    </state>
     <transition>
       <from>0</from>
       <to>1</to>
       <read></read>
       <pop></pop>
-      <push>S</push>
+      <push>A</push>
     </transition>
     <transition>
       <from>1</from>
@@ -46,63 +42,35 @@
       <from>1</from>
       <to>3</to>
       <read/>
-      <pop>S</pop>
-      <push>b</push>
+      <pop>A</pop>
+      <push>x</push>
     </transition>
     <transition>
       <from>3</from>
       <to>4</to>
       <read/>
       <pop/>
-      <push>T</push>
+      <push>B</push>
     </transition>
     <transition>
       <from>4</from>
       <to>1</to>
       <read/>
       <pop/>
-      <push>a</push>
+      <push>x</push>
     </transition>
     <transition>
       <from>1</from>
       <to>1</to>
-      <read/>
-      <pop>S</pop>
-      <push>b</push>
-    </transition>
-    <transition>
-      <from>1</from>
-      <to>5</to>
-      <read/>
-      <pop>T</pop>
-      <push>a</push>
-    </transition>
-    <transition>
-      <from>5</from>
-      <to>1</to>
-      <read/>
-      <pop/>
-      <push>T</push>
-    </transition>
-    <transition>
-      <from>1</from>
-      <to>1</to>
-      <read/>
-      <pop>T</pop>
-      <push></push>
-    </transition>
-    <transition>
-      <from>1</from>
-      <to>1</to>
-      <read>b</read>
-      <pop>b</pop>
+      <read>B</read>
+      <pop>B</pop>
       <push/>
     </transition>
     <transition>
       <from>1</from>
       <to>1</to>
-      <read>a</read>
-      <pop>a</pop>
+      <read>x</read>
+      <pop>x</pop>
       <push/>
     </transition>
   </automaton>

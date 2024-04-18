@@ -2,6 +2,14 @@ import os
 from lxml import etree
 
 
+def addTerminal(terminais, terminal):
+    if isinstance(terminal, str):
+        if terminal != '' and terminal.islower():
+            terminais.add(terminal)
+        else:
+            terminais.add(terminal)
+
+
 def salvarAutomato(dic: dict, s):
     root = etree.Element("structure")
     etree.SubElement(root, "type").text = "pda"
@@ -76,6 +84,7 @@ def salvarAutomato(dic: dict, s):
                 etree.SubElement(
                     transition, "pop").text = regra[0]
                 etree.SubElement(transition, "push").text = dic[regra]
+                addTerminal(terminais=terminais, terminal=dic[regra])
                 continue
             if len(dic[regra]) > 1:
                 transition = etree.SubElement(automaton, "transition")
@@ -85,11 +94,7 @@ def salvarAutomato(dic: dict, s):
                 etree.SubElement(
                     transition, "pop").text = regra[0]
             for index, derivacao in enumerate(dic[regra][::-1]):
-                if isinstance(derivacao, str):
-                    if derivacao.islower():
-                        terminais.add(derivacao)
-                else:
-                    terminais.add(derivacao)
+                addTerminal(terminais=terminais, terminal=derivacao)
                 if derivacao != '' and index == 0:
                     etree.SubElement(transition, "push").text = derivacao
                     continue
@@ -102,7 +107,6 @@ def salvarAutomato(dic: dict, s):
                     etree.SubElement(transition, "pop")
                     etree.SubElement(transition, "push").text = derivacao
                     ids += 1
-    print(terminais)
     for terminal in terminais:
         transition = etree.SubElement(automaton, "transition")
         etree.SubElement(transition, "from").text = '1'

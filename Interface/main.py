@@ -47,7 +47,8 @@ def thExecutar():
     global processo, text
     text = False
     while processo.poll() is None:
-        ...
+        for bt in buttons_operacoes:
+            bt.config(state="disable")
     if th_aux:
         janela.screen.after(0, habilitarComponentes)
 
@@ -62,8 +63,6 @@ def novoProcessoJava(caminhoJar, caminhoAutomato=None):
         processo = sb.Popen(listaCmd, creationflags=sb.CREATE_NO_WINDOW)
         if caminhoJar.split("/")[-1] == "JFLAP.jar":
             return
-        for bt in buttons_operacoes:
-            bt.config(state="disable")
         addVingadorMaisForte()
         label_mensagem.place(x=185, y=350)
         thread = threading.Thread(target=thExecutar)
@@ -193,6 +192,66 @@ def conversaStark(event=None):
     return "break"
 
 
+def novoProcessoPython(caminho):
+    global processo, thread
+    processo = sb.Popen(caminho, creationflags=sb.CREATE_NO_WINDOW)
+    addVingadorMaisForte()
+    label_mensagem.place(x=185, y=350)
+    thread = threading.Thread(target=thExecutar)
+    thread.start()
+
+
+def voltarMain(buttons_operacoes):
+    for coomponente in canvas.winfo_children():
+        if isinstance(coomponente, Button):
+            coomponente.place_forget()
+    btProximo.place(x=2, y=564)
+    for i, evento in enumerate(lista_eventos[0:6]):
+        buttons_operacoes.append(
+            Button(
+                master=canvas,
+                background='#D9D9D9',
+                font=('Arial', 12, 'bold'),
+                text=evento,
+                width=12,
+                borderwidth=4,
+                height=3,
+                state="normal",
+                command=lambda caminho=caminhosJar[evento]: novoProcessoJava(
+                    caminho),
+            )
+        )
+        buttons_operacoes[i].place(x=28, y=60 + (i * 83))
+
+
+def novasFunicionalidades(funcionaliades, buttons_operacoes, caminhosJar, btVoltar):
+    for coomponente in canvas.winfo_children():
+        if isinstance(coomponente, Button):
+            coomponente.place_forget()
+    btVoltar.place(x=2, y=564)
+    for i, func in enumerate(funcionaliades):
+        buttons_operacoes.append(
+            Button(
+                master=canvas,
+                background='#D9D9D9',
+                font=('Arial', 12, 'bold'),
+                text=func.lower().title(),
+                width=12,
+                borderwidth=4,
+                height=3,
+                state="normal",
+                command=lambda caminho=caminhosJar[evento]: novoProcessoJava(
+                    caminho),
+            )
+        )
+        buttons_operacoes[len(buttons_operacoes) -
+                          1].place(x=28, y=60 + (i * 83))
+        if func == 'GLC-AP':
+            buttons_operacoes[len(buttons_operacoes) -
+                              1].configure(command=lambda caminho=os.path.dirname(os.path.dirname(__file__)) + '/ProjetoGlcAp/dist/ConversorGlcAp/ConversorGlcAp.exe': novoProcessoPython(
+                                  caminho))
+
+
 if __name__ == '__main__':
     try:
         sb.run(['java', '--version'], stdout=sb.DEVNULL, stderr=sb.DEVNULL)
@@ -227,7 +286,7 @@ if __name__ == '__main__':
                                                                                  for evento in lista_eventos[1:5]]
     comand = True
     buttons_operacoes = []
-    for i, evento in enumerate(lista_eventos):
+    for i, evento in enumerate(lista_eventos[0:6]):
         buttons_operacoes.append(
             Button(
                 master=canvas,
@@ -242,7 +301,7 @@ if __name__ == '__main__':
                     caminho),
             )
         )
-        buttons_operacoes[i].place(x=28, y=50 + (i * 77))
+        buttons_operacoes[i].place(x=28, y=60 + (i * 83))
 
     label_opercoes = Label(
         master=canvas,
@@ -279,7 +338,32 @@ if __name__ == '__main__':
     )
     label_titulo.place(x=185, y=10)
     imgs = [PhotoImage(file=os.path.join(os.path.dirname(__file__), "img", "lampada_apagada.png")),
-            PhotoImage(file=os.path.join(os.path.dirname(__file__), "img", "lampada_acesa.png"))]
+            PhotoImage(file=os.path.join(os.path.dirname(
+                __file__), "img", "lampada_acesa.png")),
+            PhotoImage(file=os.path.join(
+                os.path.dirname(__file__), "img", "proximo.png")),
+            PhotoImage(file=os.path.join(os.path.dirname(__file__), "img", "voltar.png")),]
+
+    btVoltar = Button(
+        canvas,
+        image=imgs[3],
+        bg="#9A9999",
+        borderwidth=2,
+        relief="solid",
+        command=lambda: voltarMain(buttons_operacoes=buttons_operacoes)
+    )
+
+    btProximo = Button(
+        canvas,
+        image=imgs[2],
+        bg="#9A9999",
+        borderwidth=2,
+        relief="solid",
+        command=lambda: novasFunicionalidades(
+            (lista_eventos[-1], 'GLC-AP'), buttons_operacoes, caminhosJar, btVoltar),
+    )
+    btProximo.place(x=2, y=564)
+
     btDica = Button(
         frame_navbar,
         image=imgs[0],
@@ -297,7 +381,7 @@ if __name__ == '__main__':
         os.path.dirname(__file__), "img", "enviarMsg.png")))
     btEnviar = Button(
         frame_manipulacao,
-        image=imgs[2],
+        image=imgs[4],
         bg="#9A9999",
         borderwidth=2,
         relief="solid",
@@ -319,7 +403,7 @@ if __name__ == '__main__':
 
     labelAlcides = Label(
         frame_manipulacao,
-        image=imgs[3],
+        image=imgs[5],
         bg="#838080",
     )
 
