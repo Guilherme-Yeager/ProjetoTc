@@ -40,11 +40,10 @@
   * Versão do Python utilizado para integração do projeto: python 3.12.2
 <h3>Interface:</h3>
 <div align="center">
-  <img src="https://github.com/Guilherme-Yeager/ProjetoTc/assets/105077089/b71a1df3-1dba-43fa-95ca-38ea1ef0b3b4">
+  <img src="https://github.com/Guilherme-Yeager/ProjetoTc/assets/105077089/33528cf5-a16a-4529-8cb0-4126594583aa">
 </div>
-  
 <h2>5. Ferramentas utilizadas</h2>
 <div align="justify">
-  Aplicação desenvolvida na linguagem Java (partes que integram o projeto) e com interface 
+  Aplicação desenvolvida na linguagem Java e Python (partes que integram o projeto) e com interface 
   desenvolvida em Python.     
 </div>
