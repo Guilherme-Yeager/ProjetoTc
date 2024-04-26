@@ -242,7 +242,7 @@ def novasFunicionalidades(funcionaliades, buttons_operacoes, caminhos, btVoltar)
                 master=canvas,
                 background='#D9D9D9',
                 font=('Arial', 12, 'bold'),
-                text=func.lower().title(),
+                text=func,
                 width=12,
                 borderwidth=4,
                 height=3,
